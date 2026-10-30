@@ -6,19 +6,21 @@ import { INSTAGRAM_URL, FACEBOOK_URL, MESSENGER_URL, FOLLOWERS, CANCELLATION } f
 export default function Footer() {
   const ref = useReveal()
   return (
-    <footer className="border-t border-line pt-14 md:pt-20 pb-10">
-      {/* A barber pole stands at each end of the footer's link row, spinning */}
-      <div ref={ref} className="reveal mx-auto max-w-6xl px-5 flex items-center gap-4 md:gap-12 text-sm">
-        <BarberPole className="shrink-0 w-9 sm:w-12 md:w-[4.5rem]" />
-        <div className="flex-1 min-w-0 flex flex-wrap items-center justify-center md:justify-between gap-x-12 gap-y-6 text-center md:text-left">
-          <nav aria-label="Social" className="flex flex-wrap justify-center gap-x-8 gap-y-3">
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Instagram</a>
-            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Facebook <span className="text-muted">({FOLLOWERS} followers)</span></a>
-            <a href={MESSENGER_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Message us</a>
-          </nav>
-          <p className="max-w-xs text-muted leading-relaxed">{CANCELLATION}</p>
+    <footer className="border-t border-line pt-10 md:pt-14 pb-10 overflow-hidden">
+      {/* A barber pole stands at each far edge of the page, level with the links, spinning */}
+      <div className="relative">
+        <BarberPole className="absolute inset-y-0 my-auto h-fit left-3 sm:left-6 md:left-10 w-[26px] sm:w-8 md:w-10" />
+        <div ref={ref} className="reveal mx-auto max-w-6xl px-14 sm:px-20 md:px-24 min-h-[139px] sm:min-h-[171px] md:min-h-[213px] flex items-center text-sm">
+          <div className="w-full flex flex-wrap items-center justify-center md:justify-between gap-x-12 gap-y-6 text-center md:text-left">
+            <nav aria-label="Social" className="flex flex-wrap justify-center gap-x-8 gap-y-3">
+              <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Instagram</a>
+              <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Facebook <span className="text-muted">({FOLLOWERS} followers)</span></a>
+              <a href={MESSENGER_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Message us</a>
+            </nav>
+            <p className="max-w-xs text-muted leading-relaxed">{CANCELLATION}</p>
+          </div>
         </div>
-        <BarberPole mirror className="shrink-0 w-9 sm:w-12 md:w-[4.5rem]" />
+        <BarberPole mirror className="absolute inset-y-0 my-auto h-fit right-3 sm:right-6 md:right-10 w-[26px] sm:w-8 md:w-10" />
       </div>
 
       <FooterWordmark />
