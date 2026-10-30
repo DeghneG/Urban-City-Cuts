@@ -194,15 +194,18 @@ const INTENTS = [
   },
   {
     id: 'franchise',
+    boost: 40, // a franchise question outranks generic price words like 'how much'
     keys: ['franchise', 'franchising', 'royalty', 'invest', 'investment', 'own a branch', 'open a branch', 'business opportunity', 'partner', 'start my own'],
-    run: () =>
+    run: (q) =>
       reply(
-        'Urban City Cuts is open for franchising outside Iloilo City, with no royalty fee. You get a proven business concept, continuous support, modern shop design and a trusted barbershop brand.',
+        'Urban City Cuts is open for franchising outside Iloilo City, with no royalty fee. You get a proven business concept, continuous support, modern shop design and a trusted barbershop brand.' +
+          (/(cost|fee|invest|capital|amount|how much|price)/.test(q) ? ' The investment amount is not published, so message or call us for details.' : ''),
         { links: [link('Franchise details', '#franchise'), FRANCHISE_FORM_URL ? link('Send an inquiry', '#franchise') : link('Message us', MESSENGER_URL, true), link(`Call ${formatPhone(SHARED_PHONE)}`, telHref(SHARED_PHONE))], chips: ['Now hiring', 'Contact numbers'] },
       ),
   },
   {
     id: 'hiring',
+    boost: 40,
     keys: ['hiring', 'job', 'jobs', 'work for', 'apply', 'application', 'career', 'careers', 'vacancy', 'barber wanted', 'barbers wanted', 'pavia', 'trabaho', 'looking for barbers'],
     run: () => reply('We are hiring barbers for our growing team in Pavia, Iloilo. Message us on Facebook to apply.', { links: [link('Apply on Messenger', MESSENGER_URL, true)], chips: ['Franchise', 'Branch locations'] }),
   },
@@ -263,6 +266,7 @@ export function answer(input) {
   for (const intent of INTENTS) {
     let score = 0
     for (const key of intent.keys) if (has(q, key)) score = Math.max(score, key.split(' ').length * 10 + key.length)
+    if (score) score += intent.boost || 0
     if (score && (!best || score > best.score)) best = { intent, score }
   }
   if (best) return best.intent.run(q)
