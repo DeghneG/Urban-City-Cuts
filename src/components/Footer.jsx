@@ -1,5 +1,4 @@
 import FooterWordmark from './FooterWordmark'
-import BarberPole from './BarberPole'
 import { useReveal } from '../hooks/useReveal'
 import { INSTAGRAM_URL, FACEBOOK_URL, MESSENGER_URL, FOLLOWERS, CANCELLATION } from '../lib/site'
 
@@ -14,11 +13,6 @@ export default function Footer() {
           <a href={MESSENGER_URL} target="_blank" rel="noopener noreferrer" className="footer-link text-chrome">Message us</a>
         </nav>
         <p className="max-w-xs text-muted leading-relaxed">{CANCELLATION}</p>
-      </div>
-
-      {/* One barber pole, centred above the wordmark like a shop-front emblem */}
-      <div className="mt-12 md:mt-16 flex justify-center">
-        <BarberPole className="w-[22px] sm:w-6 md:w-7" />
       </div>
 
       <FooterWordmark />
