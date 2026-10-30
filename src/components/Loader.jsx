@@ -3,28 +3,33 @@ import { gsap } from 'gsap'
 import { setScrollLocked } from '../lib/smoothScroll'
 
 const SHINE_MS = 2600
+const FLIGHT = 2.6 // seconds the logo takes to travel to the navbar
 
 // Intro: the logo emblem rises, a light sweeps across it, and a bar and percentage count to 100.
-// Then GSAP does one continuous move: the loading screen lifts away while the emblem flies up into its
-// place in the navbar, where the real logo takes over. The emblem lives outside the lifting panel so it can travel on its own.
+// While this plays, the navbar's logo spot stays empty. Then GSAP carries the whole logo, emblem and wordmark,
+// slowly up to that spot while the loading screen lifts away, and the real navbar logo takes over exactly where it lands.
+// Both pieces live outside the lifting panel so they can travel on their own.
 export default function Loader() {
   // Arriving back from /admin or /preview skips the intro; a normal load or refresh still plays it
   const [skip] = useState(() => { try { return sessionStorage.getItem('ucc-skip-intro') === '1' } catch { return false } })
   const [phase, setPhase] = useState(skip ? 'done' : 'shine') // shine → done
-  const [box, setBox] = useState(null) // where the emblem sits at the start
+  const [box, setBox] = useState(null) // where the emblem and wordmark start
   const panel = useRef(null)
   const spacer = useRef(null)
+  const wordSpacer = useRef(null)
   const emblem = useRef(null)
-  const text = useRef(null)
+  const word = useRef(null)
+  const chrome = useRef(null)
   const count = useRef(null)
   const fill = useRef(null)
 
-  // Put the flying emblem exactly over the spot reserved for it in the loading screen
+  // Put the flying pieces exactly over the spots reserved for them in the loading screen
   useLayoutEffect(() => {
     if (skip) return
     const place = () => {
-      const r = spacer.current?.getBoundingClientRect()
-      if (r) setBox({ left: r.left, top: r.top, width: r.width, height: r.height })
+      const a = spacer.current?.getBoundingClientRect()
+      const b = wordSpacer.current?.getBoundingClientRect()
+      if (a && b) setBox({ emblem: { left: a.left, top: a.top, width: a.width, height: a.height }, word: { left: b.left, top: b.top } })
     }
     place()
     window.addEventListener('resize', place)
@@ -38,7 +43,7 @@ export default function Loader() {
     }
     const root = document.documentElement
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    // is-loading holds the hero's entrance; logo-pending keeps the navbar logo hidden until the emblem lands
+    // is-loading holds the hero's entrance; logo-pending keeps the navbar logo hidden until the logo lands on it
     root.classList.add('is-loading', 'logo-pending')
     setScrollLocked(true)
 
@@ -49,21 +54,28 @@ export default function Loader() {
     const fonts = Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 2500))])
 
     Promise.all([minimum, fonts]).then(() => {
-      if (cancelled || !emblem.current) return
-      const from = emblem.current.getBoundingClientRect()
-      const to = document.querySelector('header nav a img')?.getBoundingClientRect()
-      const dx = to ? to.left + to.width / 2 - (from.left + from.width / 2) : 0
-      const dy = to ? to.top + to.height / 2 - (from.top + from.height / 2) : 0
-      const scale = to ? to.height / from.height : 1
-      const t = reduced ? 0.35 : 1.15
+      if (cancelled || !emblem.current || !word.current) return
+      const eFrom = emblem.current.getBoundingClientRect()
+      const wFrom = word.current.getBoundingClientRect()
+      const eTo = document.querySelector('header nav a img')?.getBoundingClientRect()
+      const wTo = document.querySelector('header nav a span')?.getBoundingClientRect()
+      const ex = eTo ? eTo.left + eTo.width / 2 - (eFrom.left + eFrom.width / 2) : 0
+      const ey = eTo ? eTo.top + eTo.height / 2 - (eFrom.top + eFrom.height / 2) : 0
+      const es = eTo ? eTo.height / eFrom.height : 1
+      // The wordmark is left-aligned to its target, so only its tracking has to change on the way
+      const wx = wTo ? wTo.left - wFrom.left : 0
+      const wy = wTo ? wTo.top - wFrom.top : 0
+      const t = reduced ? 0.45 : FLIGHT
+      const land = 0.5 + t // when the logo reaches the navbar, on the timeline's clock
 
       tl = gsap.timeline({ onComplete: () => { root.classList.remove('logo-pending'); setPhase('done') } })
-      tl.to(text.current, { autoAlpha: 0, y: -8, duration: 0.4, ease: 'power2.out' }, 0)
-        .add(() => { root.classList.remove('is-loading'); setScrollLocked(false) }, 0.3) // the hero starts as the screen lifts
-        .to(panel.current, { yPercent: -100, duration: t, ease: 'power4.inOut' }, 0.35)
-        .to(emblem.current, { x: dx, y: dy, scale, duration: t, ease: 'power3.inOut' }, 0.35)
-        .add(() => root.classList.remove('logo-pending'), `>-0.12`) // the navbar logo fades in just under the emblem
-        .to(emblem.current, { autoAlpha: 0, duration: 0.3, ease: 'none' }, '>')
+      tl.to(chrome.current, { autoAlpha: 0, y: 6, duration: 0.6, ease: 'power2.out' }, 0)
+        .to(emblem.current, { x: ex, y: ey, scale: es, duration: t, ease: 'power3.inOut' }, 0.5)
+        .to(word.current, { x: wx, y: wy, letterSpacing: '0.12em', duration: t, ease: 'power3.inOut' }, 0.5)
+        .to(panel.current, { yPercent: -100, duration: t * 0.85, ease: 'power3.inOut' }, 0.9)
+        .add(() => { root.classList.remove('is-loading'); setScrollLocked(false) }, 1.3) // the hero begins as the screen clears
+        .add(() => root.classList.remove('logo-pending'), land - 0.15) // the navbar logo fades in just under the landing logo
+        .to([emblem.current, word.current], { autoAlpha: 0, duration: 0.35, ease: 'none' }, land)
     })
 
     return () => {
@@ -94,15 +106,17 @@ export default function Loader() {
   if (phase === 'done') return null
 
   const mask = { WebkitMaskImage: 'url(/img/logo-mark.png)', maskImage: 'url(/img/logo-mark.png)', WebkitMaskSize: 'contain', maskSize: 'contain', WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskPosition: 'center' }
+  // Same type as the navbar wordmark, so the flying text lands as an exact match (only its letter spacing differs at the start)
+  const wordClass = 'display text-[0.8rem] leading-none whitespace-nowrap'
 
   return (
     <>
       <div ref={panel} className="loader" style={{ transition: 'none' }} role="status" aria-label="Loading Urban City Cuts">
         <div className="loader__inner" style={{ transition: 'none' }}>
-          {/* Reserved space: the real emblem is drawn above the panel so it can fly out on its own */}
+          {/* Reserved space: the real emblem and wordmark are drawn above the panel so they can fly out on their own */}
           <div ref={spacer} className="mx-auto" style={{ width: 'clamp(6.5rem, 20vw, 9.5rem)', aspectRatio: '240 / 246' }} />
-          <div ref={text} className="mt-8">
-            <p className="display text-[0.8rem] tracking-[0.34em] text-chrome-light" aria-hidden="true">Urban City Cuts</p>
+          <p ref={wordSpacer} className={`${wordClass} mt-8 inline-block opacity-0`} style={{ letterSpacing: '0.34em' }} aria-hidden="true">Urban City Cuts</p>
+          <div ref={chrome}>
             <div className="loader__bar" aria-hidden="true"><span ref={fill} /></div>
             <p className="loader__count" aria-hidden="true"><span ref={count}>000</span> %</p>
           </div>
@@ -110,12 +124,15 @@ export default function Loader() {
       </div>
 
       {box && (
-        <div ref={emblem} className="fixed z-[101] pointer-events-none" style={{ ...box, willChange: 'transform' }} aria-hidden="true">
-          <div className="loader__mark" style={{ display: 'block', width: '100%', height: '100%' }}>
-            <img src="/img/logo-mark.png" alt="" className="w-full h-full object-contain" />
-            <div className="loader__shine" style={{ ...mask, backgroundClip: 'border-box', WebkitBackgroundClip: 'border-box', color: 'inherit' }} />
+        <>
+          <div ref={emblem} className="fixed z-[101] pointer-events-none" style={{ ...box.emblem, willChange: 'transform' }} aria-hidden="true">
+            <div className="loader__mark" style={{ display: 'block', width: '100%', height: '100%' }}>
+              <img src="/img/logo-mark.png" alt="" className="w-full h-full object-contain" />
+              <div className="loader__shine" style={{ ...mask, backgroundClip: 'border-box', WebkitBackgroundClip: 'border-box', color: 'inherit' }} />
+            </div>
           </div>
-        </div>
+          <p ref={word} className={`${wordClass} fixed z-[101] pointer-events-none text-bone`} style={{ ...box.word, letterSpacing: '0.34em', willChange: 'transform' }} aria-hidden="true">Urban City Cuts</p>
+        </>
       )}
     </>
   )
