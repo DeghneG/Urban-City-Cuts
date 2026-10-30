@@ -42,14 +42,13 @@ export default function Loader() {
       return
     }
     const root = document.documentElement
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     // is-loading holds the hero's entrance; logo-pending keeps the navbar logo hidden until the logo lands on it
     root.classList.add('is-loading', 'logo-pending')
     setScrollLocked(true)
 
     let cancelled = false
     let tl
-    const minimum = new Promise((r) => setTimeout(r, reduced ? 300 : SHINE_MS))
+    const minimum = new Promise((r) => setTimeout(r, SHINE_MS))
     // Cap the font wait so a slow network never strands the visitor on the loader
     const fonts = Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 2500))])
 
@@ -65,7 +64,7 @@ export default function Loader() {
       // The wordmark is left-aligned to its target, so only its tracking has to change on the way
       const wx = wTo ? wTo.left - wFrom.left : 0
       const wy = wTo ? wTo.top - wFrom.top : 0
-      const t = reduced ? 0.45 : FLIGHT
+      const t = FLIGHT
       const land = 0.5 + t // when the logo reaches the navbar, on the timeline's clock
 
       tl = gsap.timeline({ onComplete: () => { root.classList.remove('logo-pending'); setPhase('done') } })

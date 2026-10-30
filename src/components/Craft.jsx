@@ -12,10 +12,6 @@ function ScrubText({ text }) {
   useEffect(() => {
     const el = ref.current
     const words = [...el.querySelectorAll('span')]
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      words.forEach((w) => (w.style.opacity = 1))
-      return
-    }
     let raf = 0
     const update = () => {
       raf = 0

@@ -292,12 +292,6 @@
 .is-loading .animate-fadeUp {
   animation-play-state: paused;
 }
-@media (prefers-reduced-motion: reduce) {
-  .loader, .loader__inner { transition: opacity 0.3s ease; }
-  .loader--lift { transform: none; opacity: 0; }
-  .loader__mark, .loader__shine { animation: none; }
-}
-
 /* Reveal on scroll */
 .reveal {
   opacity: 0;
@@ -336,14 +330,6 @@
 .animate-ticker:hover { animation-play-state: paused; }
 .animate-ticker {
   animation: ticker 30s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* Reveals still fade in, they just do not travel */
-  .reveal { transform: none; }
-  .animate-marquee { animation: none; }
-  /* The highlights strip keeps drifting, just slower, so it never looks broken */
-  .animate-ticker { animation-duration: 90s; }
 }
 
 .no-scrollbar {
@@ -420,13 +406,6 @@
 }
 .wipe-host.visible .wipe img {
   transform: scale(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  /* Keep the crossfade and the line reveals; drop the push-in zoom and the clip wipe */
-  .slide img, .slide.is-active img { transform: none; animation: none; }
-  .wipe { clip-path: none; transition: none; }
-  .wipe img { transform: none; transition: none; }
 }
 
 /* MapLibre wraps popup content in a white padded box; the branch popup brings its own surface */

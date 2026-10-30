@@ -14,10 +14,6 @@ export function useScrollProgress(mode = 'pass') {
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      el.style.setProperty('--p', mode === 'sticky' ? '0' : '0.5')
-      return
-    }
 
     let frame = 0
     const update = () => {
