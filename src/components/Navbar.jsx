@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { bookHref, bookExternal } from '../lib/site'
 import { setScrollLocked } from '../lib/smoothScroll'
@@ -14,6 +14,8 @@ const LINKS = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [solid, setSolid] = useState(false)
+  const [menuTop, setMenuTop] = useState(68)
+  const header = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 40)
@@ -27,39 +29,60 @@ export default function Navbar() {
   useEffect(() => {
     if (!open) return
     setScrollLocked(true)
-    return () => setScrollLocked(false)
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    const onResize = () => window.innerWidth >= 768 && setOpen(false)
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('resize', onResize)
+    return () => {
+      setScrollLocked(false)
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('resize', onResize)
+    }
   }, [open])
+
+  // The menu starts right under the bar, wherever the bar sits (below the advisory at the top, or flush when scrolled)
+  const toggle = () => {
+    if (!open) setMenuTop(header.current.getBoundingClientRect().bottom)
+    setOpen((o) => !o)
+  }
 
   const bookProps = bookExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
   return (
-    <header className={`sticky top-0 z-50 transition-colors duration-500 ${solid || open ? 'bg-ink/90 backdrop-blur-md border-b border-line' : 'bg-transparent border-b border-transparent'}`}>
-      <nav className="mx-auto max-w-6xl h-[68px] px-5 flex items-center justify-between" aria-label="Main">
-        <a href="#" className="flex items-center gap-3" aria-label="Urban City Cuts, back to top">
-          <img src="/img/logo-mark.png" alt="" className="h-9 w-auto" />
-          <span className="display text-[0.8rem] tracking-[0.12em] leading-none">
-            Urban City Cuts
-          </span>
-        </a>
+    <>
+      <header ref={header} className={`sticky top-0 z-50 transition-colors duration-500 ${solid || open ? 'bg-ink/90 backdrop-blur-md border-b border-line' : 'bg-transparent border-b border-transparent'}`}>
+        <nav className="mx-auto max-w-6xl h-[68px] px-5 flex items-center justify-between" aria-label="Main">
+          <a href="#" className="flex items-center gap-3" aria-label="Urban City Cuts, back to top">
+            <img src="/img/logo-mark.png" alt="" className="h-9 w-auto" />
+            <span className="display text-[0.8rem] tracking-[0.12em] leading-none">
+              Urban City Cuts
+            </span>
+          </a>
 
-        <ul className="hidden md:flex items-center gap-9">
-          {LINKS.map(([label, href]) => (
-            <li key={href}>
-              <a href={href} className="footer-link text-[0.68rem] font-medium tracking-[0.24em] uppercase text-chrome">{label}</a>
-            </li>
-          ))}
-        </ul>
+          <ul className="hidden md:flex items-center gap-9">
+            {LINKS.map(([label, href]) => (
+              <li key={href}>
+                <a href={href} className="footer-link text-[0.68rem] font-medium tracking-[0.24em] uppercase text-chrome">{label}</a>
+              </li>
+            ))}
+          </ul>
 
-        <div className="flex items-center gap-3">
-          <a href={bookHref} {...bookProps} className="btn btn-chrome !py-3 !px-5 hidden sm:inline-flex">Book</a>
-          <button onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} className="md:hidden w-11 h-11 flex items-center justify-center text-bone cursor-pointer">
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </nav>
+          <div className="flex items-center gap-3">
+            <a href={bookHref} {...bookProps} className="btn btn-chrome !py-3 !px-5 hidden sm:inline-flex">Book</a>
+            <button onClick={toggle} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} className="md:hidden w-11 h-11 flex items-center justify-center text-bone cursor-pointer">
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </nav>
+      </header>
 
+      {/* Sibling of the header, not a child: the header's backdrop-filter would otherwise become the
+          containing block for this fixed panel and collapse it to nothing. */}
       {open && (
-        <div className="md:hidden fixed inset-x-0 top-[68px] bottom-0 bg-ink/98 px-6 pt-8 animate-fadeUp [animation-delay:0s] [animation-duration:0.35s]">
+        <div
+          className="md:hidden fixed inset-x-0 bottom-0 z-40 bg-ink px-6 pt-8 overflow-y-auto animate-fadeUp [animation-delay:0s] [animation-duration:0.35s]"
+          style={{ top: menuTop }}
+        >
           <ul className="flex flex-col">
             {LINKS.map(([label, href]) => (
               <li key={href} className="border-b border-line">
@@ -70,6 +93,6 @@ export default function Navbar() {
           <a href={bookHref} {...bookProps} onClick={() => setOpen(false)} className="btn btn-chrome w-full mt-8">Book now</a>
         </div>
       )}
-    </header>
+    </>
   )
 }
