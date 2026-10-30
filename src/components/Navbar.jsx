@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { gsap } from 'gsap'
 import { Menu, X } from 'lucide-react'
 import { openBooking } from '../lib/site'
 import { setScrollLocked } from '../lib/smoothScroll'
@@ -18,6 +19,12 @@ export default function Navbar() {
   const header = useRef(null)
   const bar = useRef(null)
 
+  // One stripe cycle is 32px along the gradient, which is 32 / cos(45deg) = 45.25px along x, so this loops seamlessly
+  useLayoutEffect(() => {
+    const tween = gsap.to(bar.current, { backgroundPositionX: '45.2548px', duration: 1.1, ease: 'none', repeat: -1 })
+    return () => tween.kill()
+  }, [])
+
   useEffect(() => {
     let raf = 0
     const update = () => {
@@ -26,7 +33,7 @@ export default function Navbar() {
       // Reading progress goes straight to the bar's transform, so scrolling never re-renders React
       const max = document.documentElement.scrollHeight - window.innerHeight
       const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
-      if (bar.current) bar.current.style.transform = `scaleX(${p})`
+      if (bar.current) bar.current.style.clipPath = `inset(0 ${((1 - p) * 100).toFixed(2)}% 0 0)`
     }
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
     update()
@@ -65,8 +72,8 @@ export default function Navbar() {
   return (
     <>
       {/* Scroll progress: a hairline across the very top of the screen, above the navbar */}
-      <div className="fixed inset-x-0 top-0 z-[55] h-[3px] pointer-events-none" aria-hidden="true">
-        <div ref={bar} className="h-full origin-left bg-gradient-to-r from-chrome-dark via-chrome-light to-white" style={{ transform: 'scaleX(0)' }} />
+      <div className="fixed inset-x-0 top-0 z-[55] h-[4px] pointer-events-none" aria-hidden="true">
+        <div ref={bar} className="h-full w-full barber-stripes" style={{ clipPath: 'inset(0 100% 0 0)' }} />
       </div>
       <header ref={header} className={`sticky top-0 z-50 transition-colors duration-500 ${solid || open ? 'bg-ink/90 backdrop-blur-md border-b border-line' : 'bg-transparent border-b border-transparent'}`}>
         <nav className="mx-auto max-w-[1600px] h-[68px] px-5 lg:px-10 flex items-center justify-between" aria-label="Main">
