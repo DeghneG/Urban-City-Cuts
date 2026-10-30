@@ -1,5 +1,6 @@
 import { CAFE, peso } from '../lib/menuData'
 import Photo from './Photo'
+import { useAdmin } from '../lib/adminStore'
 import { useReveal } from '../hooks/useReveal'
 
 const dash = <span className="text-chrome-dark/50" aria-label="not served">–</span>
@@ -46,6 +47,7 @@ function SimpleCard({ title, rows }) {
 }
 
 export default function Cafe() {
+  useAdmin() // re-render when the owner edits a café price
   const head = useReveal()
   const a = useReveal(100)
   const b = useReveal(200)

@@ -16,12 +16,27 @@ export default function Navbar() {
   const [solid, setSolid] = useState(false)
   const [menuTop, setMenuTop] = useState(68)
   const header = useRef(null)
+  const bar = useRef(null)
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 40)
-    onScroll()
+    let raf = 0
+    const update = () => {
+      raf = 0
+      setSolid(window.scrollY > 40)
+      // Reading progress goes straight to the bar's transform, so scrolling never re-renders React
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
+      if (bar.current) bar.current.style.transform = `scaleX(${p})`
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    window.addEventListener('resize', onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
   }, [])
 
   // Only touch the lock while the mobile menu is open. Running on mount with open=false would release
@@ -50,19 +65,23 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Scroll progress: a hairline across the very top of the screen, above the navbar */}
+      <div className="fixed inset-x-0 top-0 z-[55] h-[3px] pointer-events-none" aria-hidden="true">
+        <div ref={bar} className="h-full origin-left bg-gradient-to-r from-chrome-dark via-chrome-light to-white" style={{ transform: 'scaleX(0)' }} />
+      </div>
       <header ref={header} className={`sticky top-0 z-50 transition-colors duration-500 ${solid || open ? 'bg-ink/90 backdrop-blur-md border-b border-line' : 'bg-transparent border-b border-transparent'}`}>
         <nav className="mx-auto max-w-6xl h-[68px] px-5 flex items-center justify-between" aria-label="Main">
           <a href="#" className="flex items-center gap-3" aria-label="Urban City Cuts, back to top">
             <img src="/img/logo-mark.png" alt="" className="h-9 w-auto" />
-            <span className="display text-[0.8rem] tracking-[0.12em] leading-none">
+            <span className="display text-[0.8rem] tracking-[0.12em] leading-none whitespace-nowrap">
               Urban City Cuts
             </span>
           </a>
 
-          <ul className="hidden md:flex items-center gap-9">
+          <ul className="hidden md:flex items-center gap-5 lg:gap-9">
             {LINKS.map(([label, href]) => (
               <li key={href}>
-                <a href={href} className="footer-link text-[0.68rem] font-medium tracking-[0.24em] uppercase text-chrome">{label}</a>
+                <a href={href} className="footer-link text-[0.68rem] font-medium tracking-[0.14em] lg:tracking-[0.24em] uppercase text-chrome">{label}</a>
               </li>
             ))}
           </ul>

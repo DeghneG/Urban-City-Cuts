@@ -449,3 +449,27 @@
 .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip { border-top-color: #26282c !important; }
 .maplibregl-popup-anchor-left .maplibregl-popup-tip { border-right-color: #26282c !important; }
 .maplibregl-popup-anchor-right .maplibregl-popup-tip { border-left-color: #26282c !important; }
+
+/* Preloader progress bar: fills with an ease-out over the intro, number counts alongside */
+.loader__bar {
+  width: min(62vw, 260px);
+  height: 1px;
+  margin: 2.25rem auto 0;
+  background: #26282c;
+  position: relative;
+  overflow: hidden;
+}
+.loader__bar > span {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #7d838a, #ffffff);
+  transform-origin: left;
+  transform: scaleX(0); /* driven from Loader.jsx so the bar and the number share one clock */
+}
+.loader__count {
+  margin-top: 0.9rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  color: var(--chrome-dark);
+  font-variant-numeric: tabular-nums;
+}

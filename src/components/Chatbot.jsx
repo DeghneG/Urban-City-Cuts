@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { MessageCircle, X, Send, Instagram } from 'lucide-react'
 import { answer, GREETING } from '../lib/chatEngine'
 import { INSTAGRAM_URL, FACEBOOK_URL } from '../lib/site'
+import { logQuestion } from '../lib/adminStore'
 
 // Rule-based inquiry assistant. All answers come from the site's own data; nothing leaves the browser.
 export default function Chatbot() {
@@ -31,7 +32,9 @@ export default function Chatbot() {
     setTyping(true)
     // Short pause so the reply feels like a conversation, not a page swap
     setTimeout(() => {
-      setMsgs((m) => [...m, { from: 'bot', ...answer(q) }])
+      const r = answer(q)
+      logQuestion(q, !r.fallback)
+      setMsgs((m) => [...m, { from: 'bot', ...r }])
       setTyping(false)
     }, 450)
   }

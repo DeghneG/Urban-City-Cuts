@@ -3,12 +3,14 @@ import { Check, RotateCcw } from 'lucide-react'
 import { CATEGORIES, NOTE, peso } from '../lib/menuData'
 import { bookHref, bookExternal, CANCELLATION } from '../lib/site'
 import { useReveal } from '../hooks/useReveal'
+import { useAdmin } from '../lib/adminStore'
 
-const ALL = CATEGORIES.flatMap((c) => c.items.map((it) => ({ ...it, cat: c.id, base: Boolean(c.base) })))
-const byId = Object.fromEntries(ALL.map((i) => [i.id, i]))
+const buildAll = () => CATEGORIES.flatMap((c) => c.items.map((it) => ({ ...it, cat: c.id, base: Boolean(c.base) })))
 
 // Browse by tab, tap to build a visit. One main service (cut, package or color), plus any add-ons or products.
 export default function PriceBoard() {
+  const admin = useAdmin() // re-render, and re-read prices, when the owner edits one
+  const { byId } = useMemo(() => { const ALL = buildAll(); return { byId: Object.fromEntries(ALL.map((i) => [i.id, i])) } }, [admin])
   const [tab, setTab] = useState(CATEGORIES[0].id)
   const [baseId, setBaseId] = useState(null)
   const [extras, setExtras] = useState([])

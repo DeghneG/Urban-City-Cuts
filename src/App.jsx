@@ -15,8 +15,13 @@ import Franchise from './components/Franchise'
 import Hiring from './components/Hiring'
 import Footer from './components/Footer'
 import Chatbot from './components/Chatbot'
+import Admin from './pages/Admin'
+import Preview from './pages/Preview'
+import Login from './pages/Login'
+import { usePath, navigate } from './lib/nav'
+import { isAuthed } from './lib/auth'
 
-export default function App() {
+function Site() {
   useEffect(() => initSmoothScroll(), [])
 
   return (
@@ -40,4 +45,20 @@ export default function App() {
       <Chatbot />
     </>
   )
+}
+
+// The demo pages share the app; everything else is the website. Lenis only starts on the site, so the
+// dashboard scrolls natively. /admin needs the demo sign-in.
+function AdminGate() {
+  const authed = isAuthed()
+  useEffect(() => { if (!authed) navigate('/login', { replace: true }) }, [authed])
+  return authed ? <Admin /> : null
+}
+
+export default function App() {
+  const path = usePath()
+  if (path === '/admin') return <AdminGate />
+  if (path === '/login') return isAuthed() ? <AdminGate /> : <Login />
+  if (path === '/preview') return <Preview />
+  return <Site />
 }

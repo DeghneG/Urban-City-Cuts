@@ -5,6 +5,7 @@ import Photo, { fullSrc } from './Photo'
 import { GALLERY, FILTERS } from '../lib/menuData'
 import { INSTAGRAM_URL } from '../lib/site'
 import { useReveal } from '../hooks/useReveal'
+import { useAdmin } from '../lib/adminStore'
 
 // Each tile reveals on its own as it scrolls in, staggered by column so a row cascades
 function Tile({ g, i, onOpen }) {
@@ -23,11 +24,12 @@ function Tile({ g, i, onOpen }) {
 }
 
 export default function Gallery() {
+  const { hiddenPhotos } = useAdmin()
   const [filter, setFilter] = useState('all')
   const [index, setIndex] = useState(null)
   const head = useReveal()
 
-  const shown = useMemo(() => (filter === 'all' ? GALLERY : GALLERY.filter((g) => g.cat === filter)), [filter])
+  const shown = useMemo(() => GALLERY.filter((g) => !hiddenPhotos.includes(g.id) && (filter === 'all' || g.cat === filter)), [filter, hiddenPhotos])
   const full = useMemo(() => shown.map((g) => fullSrc(g.id)), [shown])
 
   return (

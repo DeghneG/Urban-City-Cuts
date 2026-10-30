@@ -5,6 +5,7 @@ import {
   SHARED_PHONE, FRANCHISE_FORM_URL, branchStatus, telHref, formatPhone, directionsUrl,
 } from './site'
 import { CATEGORIES, CAFE, NOTE, peso } from './menuData'
+import { getState } from './adminStore'
 
 const norm = (s) =>
   s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()
@@ -20,7 +21,7 @@ const hoursLine = (b) => b.hours.map(([d, h]) => `${d} ${h}`).join(', ')
 const STOP = new Set('the a an of w with and for to is are how much what price prices cost costs do you your i me my can there any ucc magkano mo ang ng sa po pa have get want like need rate rates'.split(' '))
 const GENERIC = new Set(['cut', 'cuts', 'hair', 'men', 'mens', 'women', 'womens', 'haircut', 'tea', 'package', 'beer', 'soda', 'espresso', 'coffee'])
 
-const ITEMS = [
+const buildItems = () => [
   ...CATEGORIES.flatMap((c) => c.items.map((it) => ({ ...it, group: c.label, kind: 'service' }))),
   ...CAFE.espresso.map((it) => ({ ...it, group: 'Espresso', kind: 'drink' })),
   ...CAFE.refreshments.map((it) => ({ ...it, group: 'Refreshments', kind: 'drink' })),
@@ -28,6 +29,9 @@ const ITEMS = [
   ...CAFE.beer.map((it) => ({ ...it, group: 'Beer', kind: 'simple' })),
   ...CAFE.addons.map((it) => ({ ...it, group: 'Café add-ons', kind: 'simple' })),
 ].map((it) => ({ ...it, words: norm(it.name).split(' ').filter((w) => !STOP.has(w)) }))
+
+// Rebuilt per question so prices edited in /admin are quoted correctly
+let ITEMS = buildItems()
 
 const itemLine = (it) => {
   if ('hot' in it || 'iced' in it) {
@@ -207,7 +211,9 @@ const INTENTS = [
     id: 'hiring',
     boost: 40,
     keys: ['hiring', 'job', 'jobs', 'work for', 'apply', 'application', 'career', 'careers', 'vacancy', 'barber wanted', 'barbers wanted', 'pavia', 'trabaho', 'looking for barbers'],
-    run: () => reply('We are hiring barbers for our growing team in Pavia, Iloilo. Message us on Facebook to apply.', { links: [link('Apply on Messenger', MESSENGER_URL, true)], chips: ['Franchise', 'Branch locations'] }),
+    run: () => getState().hiring.enabled
+      ? reply(`We are hiring barbers for our growing team in ${getState().hiring.city}. Message us on Facebook to apply.`, { links: [link('Apply on Messenger', MESSENGER_URL, true)], chips: ['Franchise', 'Branch locations'] })
+      : reply('We have no open barber positions listed right now. Message us on Facebook and we will keep your details.', { links: [link('Message on Facebook', MESSENGER_URL, true)], chips: ['Franchise', 'Branch locations'] }),
   },
   {
     id: 'undas',
@@ -236,6 +242,7 @@ const INTENTS = [
 const has = (q, key) => ` ${q} `.includes(` ${key} `)
 
 export function answer(input) {
+  ITEMS = buildItems()
   const q = norm(input)
   if (!q) return reply('Ask me about hours, locations, prices, the café, booking, franchising or jobs.', { chips: CHIPS })
 
@@ -274,6 +281,7 @@ export function answer(input) {
   return reply("I'm not sure about that one. I can answer questions about hours, locations, prices, the café, booking, franchising and jobs, or you can message the shop directly.", {
     links: [link('Message on Facebook', MESSENGER_URL, true)],
     chips: CHIPS,
+    fallback: true,
   })
 }
 

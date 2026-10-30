@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { setScrollLocked } from '../lib/smoothScroll'
 
 // Mark fades up, a light sweeps across it, then the panel lifts away
@@ -7,6 +7,8 @@ const LIFT_MS = 1100
 
 export default function Loader() {
   const [phase, setPhase] = useState('shine') // shine → lift → done
+  const count = useRef(null)
+  const fill = useRef(null)
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -33,6 +35,22 @@ export default function Loader() {
     }
   }, [])
 
+  // The percentage reads the same ease curve the CSS bar uses, written straight to the DOM (no re-renders)
+  useEffect(() => {
+    const start = performance.now() + 200
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
+    let raf
+    const tick = (now) => {
+      const t = Math.min(1, Math.max(0, (now - start) / SHINE_MS))
+      const e = ease(t)
+      if (count.current) count.current.textContent = String(Math.round(e * 100)).padStart(3, '0')
+      if (fill.current) fill.current.style.transform = `scaleX(${e})`
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
   if (phase === 'done') return null
 
   return (
@@ -42,6 +60,8 @@ export default function Loader() {
           <img src="/img/logo-full.png" alt="" className="w-full" />
           <div className="loader__shine" style={{ WebkitMaskImage: 'url(/img/logo-full.png)', maskImage: 'url(/img/logo-full.png)', WebkitMaskSize: 'contain', maskSize: 'contain', WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat', WebkitMaskPosition: 'center', maskPosition: 'center', backgroundClip: 'border-box', WebkitBackgroundClip: 'border-box', color: 'inherit' }} />
         </div>
+        <div className="loader__bar" aria-hidden="true"><span ref={fill} /></div>
+        <p className="loader__count" aria-hidden="true"><span ref={count}>000</span> %</p>
       </div>
     </div>
   )
