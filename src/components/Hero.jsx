@@ -37,7 +37,7 @@ export default function Hero() {
 
   return (
     <section className="relative grid lg:grid-cols-12 lg:min-h-[calc(100svh-104px)]">
-      <div className="lg:col-span-7 flex flex-col justify-center px-5 py-14 md:py-20 lg:py-16 lg:pr-12 lg:pl-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]">
+      <div className="lg:col-span-7 xl:col-span-6 flex flex-col justify-center px-5 py-14 md:py-20 lg:py-16 lg:pr-10 lg:pl-[max(2.5rem,calc((100vw-1600px)/2+2.5rem))]">
         <p className="inline-flex items-center gap-3 text-xs text-chrome animate-fadeUp">
           <span className="relative flex w-2 h-2" aria-hidden="true">
             {status.open && <span className="absolute inset-0 rounded-full bg-bone opacity-60 animate-ping" />}
@@ -46,14 +46,14 @@ export default function Hero() {
           {status.text}
         </p>
 
-        <h1 className="display mt-7 text-[clamp(2.2rem,5vw,4.6rem)]" aria-label="Texture on top. Clean on the sides.">
+        <h1 className="display mt-7 text-[clamp(2.2rem,5vw,6.2rem)]" aria-label="Texture on top. Clean on the sides.">
           <span className="rise"><span style={{ '--d': '0.15s' }}>Texture</span></span>
           <span className="rise"><span style={{ '--d': '0.25s' }}>on top.</span></span>
           <span className="rise"><span className="chrome-text" style={{ '--d': '0.4s' }}>Clean on</span></span>
           <span className="rise"><span className="chrome-text" style={{ '--d': '0.5s' }}>the sides.</span></span>
         </h1>
 
-        <p className="mt-6 max-w-md text-chrome leading-relaxed animate-fadeUp [animation-delay:0.7s]">
+        <p className="mt-6 max-w-md xl:max-w-lg xl:text-lg text-chrome leading-relaxed animate-fadeUp [animation-delay:0.7s]">
           The perfect balance of style. Walk-ins welcome, reservations open, three branches across the city.
         </p>
         <div className="mt-10 flex flex-wrap gap-3 animate-fadeUp [animation-delay:0.85s]">
@@ -62,10 +62,10 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="lg:col-span-5 relative min-h-[56svh] lg:min-h-0 overflow-hidden grain bg-ink-2">
+      <div className="lg:col-span-5 xl:col-span-6 relative min-h-[56svh] lg:min-h-0 overflow-hidden grain bg-ink-2">
         {SLIDES.map((s, n) => (
           <div key={s.id} className={`slide absolute inset-0 overflow-hidden ${n === i ? 'is-active' : ''}`} aria-hidden={n !== i}>
-            <Photo id={s.id} alt={s.alt} priority={n === 0} sizes="(min-width: 1024px) 42vw, 100vw" className="w-full h-full object-cover" />
+            <Photo id={s.id} alt={s.alt} priority={n === 0} sizes="(min-width: 1280px) 50vw, (min-width: 1024px) 42vw, 100vw" className="w-full h-full object-cover" />
           </div>
         ))}
         <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-transparent lg:bg-gradient-to-r lg:from-ink/70 lg:via-transparent lg:to-transparent pointer-events-none" />

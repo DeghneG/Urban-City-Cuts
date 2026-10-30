@@ -28,7 +28,7 @@ const readName = () => { try { return localStorage.getItem(NAME_KEY) || '' } cat
 
 // Pick the screen position where the card covers the least of what the visitor came to look at.
 // Slots are scored by how much of the stop's text, photos and buttons they would sit on top of.
-function pickSlot(step, card) {
+function pickSlot(step, card, prev) {
   const vw = window.innerWidth
   const vh = window.innerHeight
   const mobile = vw < 640
@@ -55,7 +55,12 @@ function pickSlot(step, card) {
     const oy = Math.max(0, Math.min(s.y + h, r.bottom) - Math.max(s.y, r.top))
     return sum + ox * oy
   }, 0)
-  const best = slots.reduce((a, s) => (overlap(s) < overlap(a) - 1 ? s : a), slots[0])
+  const scores = slots.map((s) => ({ s, o: overlap(s) }))
+  const min = Math.min(...scores.map((x) => x.o))
+  // Anything within 4% of the card area of the clearest spot is "clear enough"; of those, go somewhere new
+  const clear = scores.filter((x) => x.o <= min + w * h * 0.04).map((x) => x.s)
+  const far = (s) => (prev ? Math.hypot(s.x - prev.x, s.y - prev.y) : 0)
+  const best = clear.reduce((a, s) => (far(s) > far(a) + 1 ? s : a), clear[0])
   return { ...best, w }
 }
 
@@ -131,7 +136,7 @@ export default function Tour() {
   // Choose where the card sits once the page has stopped moving (and again if the window changes size)
   useLayoutEffect(() => {
     if (phase !== 'tour' || !arrived || !card.current) return
-    const place = () => card.current && setSlot(pickSlot(step, card.current))
+    const place = () => card.current && setSlot((prev) => pickSlot(step, card.current, prev))
     place()
     window.addEventListener('resize', place)
     return () => window.removeEventListener('resize', place)
@@ -183,9 +188,9 @@ export default function Tour() {
               className="mt-2 w-full bg-transparent border-b border-line focus:border-bone outline-none py-3 text-lg text-bone placeholder:text-chrome-dark/60"
             />
           </label>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
-            <button type="submit" disabled={!draft.trim()} className="btn btn-chrome cursor-pointer sm:flex-1 disabled:opacity-40 disabled:cursor-not-allowed">Start the tour <ArrowRight size={14} /></button>
-            <button type="button" onClick={finish} className="btn btn-ghost cursor-pointer sm:flex-1">Explore on my own</button>
+          <div className="mt-8 flex flex-col gap-3">
+            <button type="submit" disabled={!draft.trim()} className="btn btn-chrome w-full cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">Start the tour <ArrowRight size={14} /></button>
+            <button type="button" onClick={finish} className="btn btn-ghost w-full cursor-pointer">Explore on my own</button>
           </div>
         </form>
       </div>

@@ -69,7 +69,7 @@ export default function Navbar() {
         <div ref={bar} className="h-full origin-left bg-gradient-to-r from-chrome-dark via-chrome-light to-white" style={{ transform: 'scaleX(0)' }} />
       </div>
       <header ref={header} className={`sticky top-0 z-50 transition-colors duration-500 ${solid || open ? 'bg-ink/90 backdrop-blur-md border-b border-line' : 'bg-transparent border-b border-transparent'}`}>
-        <nav className="mx-auto max-w-6xl h-[68px] px-5 flex items-center justify-between" aria-label="Main">
+        <nav className="mx-auto max-w-[1600px] h-[68px] px-5 lg:px-10 flex items-center justify-between" aria-label="Main">
           <a href="#" className="flex items-center gap-3" aria-label="Urban City Cuts, back to top">
             <img src="/img/logo-mark.png" alt="" className="h-9 w-auto" />
             <span className="display text-[0.8rem] tracking-[0.12em] leading-none whitespace-nowrap">
