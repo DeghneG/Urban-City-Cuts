@@ -89,17 +89,18 @@ export default function Craft() {
           <a href="#gallery" className="inline-link mt-9">See the work</a>
         </div>
 
-        <div className="md:col-span-4 md:order-1" style={{ transform: 'translateY(calc((0.5 - var(--p, 0.5)) * 110px))' }}>
+        {/* The observer watches this unclipped wrapper; a clip-path:inset(100%) target would never intersect */}
+        <div ref={a} className="wipe-host md:col-span-4 md:order-1" style={{ transform: 'translateY(calc((0.5 - var(--p, 0.5)) * 110px))' }}>
           <Tilt>
-            <div ref={a} className="wipe">
+            <div className="wipe">
               <Photo id="cut-04" alt="Textured crop with a clean skin fade" sizes="(min-width: 768px) 33vw, 100vw" className="w-full aspect-[3/4] object-cover" />
             </div>
           </Tilt>
         </div>
 
-        <div className="md:col-span-3 md:order-3 md:mt-24" style={{ transform: 'translateY(calc((var(--p, 0.5) - 0.5) * 150px))' }}>
+        <div ref={b} className="wipe-host md:col-span-3 md:order-3 md:mt-24" style={{ transform: 'translateY(calc((var(--p, 0.5) - 0.5) * 150px))' }}>
           <Tilt>
-            <div ref={b} className="wipe">
+            <div className="wipe">
               <Photo id="cut-10" alt="Hair design on a fade with a swept top" sizes="(min-width: 768px) 25vw, 100vw" className="w-full aspect-[3/4] object-cover" />
             </div>
           </Tilt>

@@ -416,14 +416,14 @@
   clip-path: inset(100% 0 0 0);
   transition: clip-path 1.4s cubic-bezier(0.77, 0, 0.18, 1);
 }
-.wipe.visible {
+.wipe-host.visible .wipe {
   clip-path: inset(0 0 0 0);
 }
 .wipe img {
   transform: scale(1.25);
   transition: transform 2s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.wipe.visible img {
+.wipe-host.visible .wipe img {
   transform: scale(1);
 }
 
