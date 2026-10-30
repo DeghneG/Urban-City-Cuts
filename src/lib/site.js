@@ -46,8 +46,8 @@ export const BRANCHES = [
     phones: ['09098748165', SHARED_PHONE],
     schedule: { weekday: [600, 1200], weekend: [600, 1200] },
     cafe: true,
-    lng: 122.53118,
-    lat: 10.72282, // Robinsons Easymart on Guzman St, which the shop sits above
+    lng: 122.531235,
+    lat: 10.722886, // In front of the building on Guzman St: Robinsons Easymart, which the shop sits above, moved ~10 m to the street side
   },
   {
     id: 'jaro',
