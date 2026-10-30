@@ -22,8 +22,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Only touch the lock while the mobile menu is open. Running on mount with open=false would release
+  // the lock the intro loader just took, letting visitors scroll under it.
   useEffect(() => {
-    setScrollLocked(open)
+    if (!open) return
+    setScrollLocked(true)
     return () => setScrollLocked(false)
   }, [open])
 
