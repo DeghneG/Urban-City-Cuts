@@ -6,11 +6,17 @@ const SHINE_MS = 2600
 const LIFT_MS = 1100
 
 export default function Loader() {
-  const [phase, setPhase] = useState('shine') // shine → lift → done
+  // Arriving back from /admin or /preview skips the intro; a normal load or refresh still plays it
+  const [skip] = useState(() => { try { return sessionStorage.getItem('ucc-skip-intro') === '1' } catch { return false } })
+  const [phase, setPhase] = useState(skip ? 'done' : 'shine') // shine → lift → done
   const count = useRef(null)
   const fill = useRef(null)
 
   useEffect(() => {
+    if (skip) {
+      try { sessionStorage.removeItem('ucc-skip-intro') } catch { /* ignore */ }
+      return
+    }
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const root = document.documentElement
     root.classList.add('is-loading')

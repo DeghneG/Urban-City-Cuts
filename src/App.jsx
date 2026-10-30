@@ -15,6 +15,8 @@ import Franchise from './components/Franchise'
 import Hiring from './components/Hiring'
 import Footer from './components/Footer'
 import Chatbot from './components/Chatbot'
+import Tour from './components/Tour'
+import Booking from './components/Booking'
 import Admin from './pages/Admin'
 import Preview from './pages/Preview'
 import Login from './pages/Login'
@@ -43,6 +45,8 @@ function Site() {
       </main>
       <Footer />
       <Chatbot />
+      <Tour />
+      <Booking />
     </>
   )
 }

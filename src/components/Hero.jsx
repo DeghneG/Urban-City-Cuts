@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import Photo from './Photo'
-import { BRANCHES, branchStatus, bookHref, bookExternal } from '../lib/site'
+import { BRANCHES, branchStatus, openBooking } from '../lib/site'
 
 // Shop interiors only (no clients in frame)
 const SLIDES = [
@@ -28,7 +28,6 @@ function useOpenStatus() {
 export default function Hero() {
   const [i, setI] = useState(0)
   const status = useOpenStatus()
-  const bookProps = bookExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
   // Advance on a timer that restarts whenever the slide changes (including a manual jump)
   useEffect(() => {
@@ -58,7 +57,7 @@ export default function Hero() {
           The perfect balance of style. Walk-ins welcome, reservations open, three branches across the city.
         </p>
         <div className="mt-10 flex flex-wrap gap-3 animate-fadeUp [animation-delay:0.85s]">
-          <a href={bookHref} {...bookProps} className="btn btn-chrome">Book your cut</a>
+          <button onClick={() => openBooking()} className="btn btn-chrome cursor-pointer">Book your cut</button>
           <a href="#menu" className="btn btn-ghost">See prices</a>
         </div>
       </div>

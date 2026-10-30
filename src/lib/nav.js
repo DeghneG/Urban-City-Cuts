@@ -18,3 +18,8 @@ export function navigate(to, { replace = false } = {}) {
   window.dispatchEvent(new Event('ucc-nav'))
   window.scrollTo(0, 0)
 }
+
+// Coming back to the site from /admin or /preview should not replay the 4-second intro
+export const skipNextIntro = () => {
+  try { sessionStorage.setItem('ucc-skip-intro', '1') } catch { /* private mode */ }
+}

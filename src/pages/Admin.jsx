@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { ExternalLink, Smartphone, RotateCcw, Check, LogOut } from 'lucide-react'
+import { Smartphone, RotateCcw, Check, LogOut, ArrowLeft } from 'lucide-react'
 import { signOut } from '../lib/auth'
-import { navigate } from '../lib/nav'
+import { navigate, skipNextIntro } from '../lib/nav'
 import PhoneFrame from '../components/PhoneFrame'
 import { useAdmin, update, resetDemo, PRICE_FIELDS } from '../lib/adminStore'
 import { BRANCHES, branchStatus, UNDAS } from '../lib/site'
@@ -239,13 +239,13 @@ export default function Admin() {
     <div className="min-h-screen bg-ink">
       <header className="border-b border-line">
         <div className="mx-auto max-w-[1400px] px-5 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <img src="/img/logo-mark.png" alt="" className="h-8 w-auto" />
-            <span className="display text-sm tracking-[0.1em]">Dashboard</span>
-            <span className="hidden sm:inline text-[0.65rem] px-2 py-1 border border-chrome-dark text-chrome">Demo</span>
+          <div className="flex items-center gap-3 min-w-0">
+            <a href="/" onClick={skipNextIntro} className="btn btn-ghost !py-2.5 !px-3 sm:!px-4 shrink-0" aria-label="Back to the website"><ArrowLeft size={14} /> <span className="hidden sm:inline">Back to website</span><span className="sm:hidden">Back</span></a>
+            <img src="/img/logo-mark.png" alt="" className="hidden sm:block h-8 w-auto" />
+            <span className="display text-sm tracking-[0.1em] hidden md:inline">Dashboard</span>
+            <span className="hidden md:inline text-[0.65rem] px-2 py-1 border border-chrome-dark text-chrome">Demo</span>
           </div>
           <nav className="flex items-center gap-2 text-sm" aria-label="Demo links">
-            <a href="/" target="_blank" rel="noopener noreferrer" className="btn btn-ghost !py-2.5 !px-4"><ExternalLink size={14} /> View site</a>
             <a href="/preview" target="_blank" rel="noopener noreferrer" className="btn btn-ghost !py-2.5 !px-4 hidden sm:inline-flex"><Smartphone size={14} /> Phone preview</a>
             <button onClick={() => { signOut(); navigate('/login') }} className="btn btn-ghost !py-2.5 !px-4 cursor-pointer"><LogOut size={14} /> Sign out</button>
           </nav>

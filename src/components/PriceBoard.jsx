@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Check, RotateCcw } from 'lucide-react'
 import { CATEGORIES, NOTE, peso } from '../lib/menuData'
-import { bookHref, bookExternal, CANCELLATION } from '../lib/site'
+import { openBooking, CANCELLATION } from '../lib/site'
 import { useReveal } from '../hooks/useReveal'
 import { useAdmin } from '../lib/adminStore'
 
@@ -28,7 +28,6 @@ export default function PriceBoard() {
   }
   const isOn = (item) => (item.base ? baseId === item.id : extras.includes(item.id))
   const reset = () => { setBaseId(null); setExtras([]) }
-  const bookProps = bookExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
   return (
     <section id="menu" className="py-24 md:py-32 bg-ink-2 border-y border-line">
@@ -127,7 +126,7 @@ export default function PriceBoard() {
                 <span className="display text-4xl tabular-nums">{peso(total)}</span>
               </div>
               {hasFrom && <p className="mt-3 text-xs text-ink/60">Color and perm start at the price shown; the final price depends on hair length and volume.</p>}
-              <a href={bookHref} {...bookProps} className="btn btn-ink w-full mt-7">Book this visit</a>
+              <button onClick={() => openBooking({ services: [baseId, ...extras].filter(Boolean) })} className="btn btn-ink w-full mt-7 cursor-pointer">Book this visit</button>
               <p className="mt-4 text-xs text-ink/60 text-center">{CANCELLATION}</p>
             </div>
           </aside>

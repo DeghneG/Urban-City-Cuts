@@ -54,3 +54,26 @@ export function scrollToElement(el) {
     instance.scrollTo(el)
   } else el.scrollIntoView({ behavior: 'smooth' })
 }
+
+// Slow, locked glide for the guided tour: ease-in-out, and longer for longer distances.
+// target: an element, a pixel position, or 'end' for the bottom of the page.
+export function glideTo(target, { offset = -72, onComplete } = {}) {
+  const y =
+    target === 'end' ? document.documentElement.scrollHeight
+    : typeof target === 'number' ? target
+    : target.getBoundingClientRect().top + window.scrollY + offset
+  const duration = Math.min(4.2, Math.max(1.8, Math.abs(y - window.scrollY) / 850))
+  if (!instance) {
+    window.scrollTo({ top: y, behavior: 'smooth' })
+    setTimeout(() => onComplete?.(), duration * 700)
+    return
+  }
+  instance.resize()
+  instance.scrollTo(y, {
+    duration,
+    easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+    lock: true,
+    force: true,
+    onComplete,
+  })
+}

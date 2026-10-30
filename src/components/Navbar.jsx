@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Menu, X } from 'lucide-react'
-import { bookHref, bookExternal } from '../lib/site'
+import { openBooking } from '../lib/site'
 import { setScrollLocked } from '../lib/smoothScroll'
 
 const LINKS = [
@@ -61,7 +61,6 @@ export default function Navbar() {
     setOpen((o) => !o)
   }
 
-  const bookProps = bookExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
   return (
     <>
@@ -87,7 +86,7 @@ export default function Navbar() {
           </ul>
 
           <div className="flex items-center gap-3">
-            <a href={bookHref} {...bookProps} className="btn btn-chrome !py-3 !px-5 hidden sm:inline-flex">Book</a>
+            <button onClick={() => openBooking()} className="btn btn-chrome !py-3 !px-5 hidden sm:inline-flex cursor-pointer">Book</button>
             <button onClick={toggle} aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} className="md:hidden w-11 h-11 flex items-center justify-center text-bone cursor-pointer">
               {open ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -109,7 +108,7 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <a href={bookHref} {...bookProps} onClick={() => setOpen(false)} className="btn btn-chrome w-full mt-8">Book now</a>
+          <button onClick={() => { setOpen(false); openBooking() }} className="btn btn-chrome w-full mt-8 cursor-pointer">Book now</button>
         </div>
       )}
     </>

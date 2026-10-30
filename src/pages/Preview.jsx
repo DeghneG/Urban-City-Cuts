@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { RotateCcw, Smartphone, Tablet, Laptop } from 'lucide-react'
+import { RotateCcw, Smartphone, Tablet, Laptop, ArrowLeft } from 'lucide-react'
 import PhoneFrame from '../components/PhoneFrame'
+import { skipNextIntro } from '../lib/nav'
 
 const DEVICES = [
   { id: 'phone', label: 'Phone', note: '390 × 844', w: 390, h: 844, round: 44, icon: Smartphone },
@@ -22,7 +23,8 @@ export default function Preview() {
       <header className="border-b border-line bg-ink">
         <div className="mx-auto max-w-6xl px-5 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <img src="/img/logo-mark.png" alt="" className="h-8 w-auto" />
+            <a href="/" onClick={skipNextIntro} className="inline-flex items-center gap-2 px-4 py-2.5 text-sm border border-line text-chrome hover:text-white hover:border-chrome" aria-label="Back to the website"><ArrowLeft size={14} /> Back<span className="hidden sm:inline"> to website</span></a>
+            <img src="/img/logo-mark.png" alt="" className="hidden sm:block h-8 w-auto" />
             <div>
               <p className="display text-sm tracking-[0.1em]">Urban City Cuts</p>
               <p className="text-xs text-muted">Device preview</p>

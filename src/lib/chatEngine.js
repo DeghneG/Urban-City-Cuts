@@ -115,7 +115,7 @@ const INTENTS = [
       reply(
         `Walk-ins and reservations are both welcome. ${BOOKING_URL ? 'Reserve online below, or ' : 'To reserve, '}call or message your branch. ${CANCELLATION}`,
         {
-          links: [BOOKING_URL ? link('Book online', BOOKING_URL, true) : link('Choose a branch', '#branches'), link('Build your visit', '#menu')],
+          links: [{ label: 'Start booking', action: 'book' }, link('Build your visit', '#menu')],
           chips: ['Cancellation policy', 'Contact numbers'],
         },
       ),

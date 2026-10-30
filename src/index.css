@@ -473,3 +473,17 @@
   color: var(--chrome-dark);
   font-variant-numeric: tabular-nums;
 }
+
+/* The tour hides the floating buttons so nothing sits on top of its card */
+.tour-active .fab {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.tour-card {
+  animation: tourIn 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes tourIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

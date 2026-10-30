@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
-import { MessageCircle, X, Send, Instagram } from 'lucide-react'
+import { MessageCircle, X, Send, Instagram, LayoutDashboard, Smartphone, Play } from 'lucide-react'
 import { answer, GREETING } from '../lib/chatEngine'
-import { INSTAGRAM_URL, FACEBOOK_URL } from '../lib/site'
+import { INSTAGRAM_URL, FACEBOOK_URL, DEMO_MODE, openBooking } from '../lib/site'
 import { logQuestion } from '../lib/adminStore'
+
+// Demo shortcuts sit beside the launcher. They are hidden inside the phone preview (an iframe of this same page).
+const EMBEDDED = typeof window !== 'undefined' && window.self !== window.top
+const demoBtn =
+  'h-14 w-12 md:w-auto md:px-5 flex items-center justify-center gap-2.5 bg-ink-3 border border-line text-bone shadow-[0_10px_40px_rgba(0,0,0,0.5)] hover:bg-bone hover:text-ink hover:border-bone transition-colors cursor-pointer text-[0.7rem] font-semibold tracking-[0.2em] uppercase'
 
 // Rule-based inquiry assistant. All answers come from the site's own data; nothing leaves the browser.
 export default function Chatbot() {
@@ -19,6 +24,13 @@ export default function Chatbot() {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
+
+  // The site tour opens and closes the chat to show it off
+  useEffect(() => {
+    const onChat = (e) => setOpen(Boolean(e.detail))
+    window.addEventListener('ucc-chat', onChat)
+    return () => window.removeEventListener('ucc-chat', onChat)
+  }, [])
 
   useEffect(() => {
     log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'smooth' })
@@ -45,7 +57,7 @@ export default function Chatbot() {
     <>
       {/* Social links ride above the launcher; they step aside while the chat is open */}
       {!open && (
-        <nav aria-label="Social media" className="fixed z-[60] right-4 bottom-20 md:right-6 md:bottom-[6.5rem] flex flex-col gap-2">
+        <nav aria-label="Social media" className="fab fixed z-[60] right-4 bottom-20 md:right-6 md:bottom-[6.5rem] flex flex-col gap-2">
           <a
             href={INSTAGRAM_URL}
             target="_blank"
@@ -73,15 +85,30 @@ export default function Chatbot() {
         </nav>
       )}
 
-      <button
-        onClick={() => setOpen((o) => !o)}
-        aria-expanded={open}
-        aria-controls="ucc-chat"
-        className="fixed z-[60] right-4 bottom-4 md:right-6 md:bottom-6 h-14 pl-5 pr-6 flex items-center gap-3 bg-bone text-ink shadow-[0_10px_40px_rgba(0,0,0,0.5)] cursor-pointer hover:bg-white transition-colors"
-      >
-        {open ? <X size={18} /> : <MessageCircle size={18} />}
-        <span className="text-[0.7rem] font-semibold tracking-[0.2em] uppercase">{open ? 'Close' : 'Ask us'}</span>
-      </button>
+      <div className="fab fixed z-[60] right-4 bottom-4 md:right-6 md:bottom-6 flex items-center gap-2">
+        {DEMO_MODE && !EMBEDDED && !open && (
+          <>
+            <button onClick={() => window.dispatchEvent(new Event('ucc-tour-start'))} aria-label="Replay the site tour" title="Replay the site tour" className={demoBtn}>
+              <Play size={16} /><span className="hidden md:inline">Tour</span>
+            </button>
+            <a href="/login" aria-label="Owner dashboard (admin)" title="Owner dashboard (admin)" className={demoBtn}>
+              <LayoutDashboard size={16} /><span className="hidden md:inline">Admin</span>
+            </a>
+            <a href="/preview" aria-label="Mobile preview" title="Mobile preview" className={demoBtn}>
+              <Smartphone size={16} /><span className="hidden md:inline">Mobile</span>
+            </a>
+          </>
+        )}
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls="ucc-chat"
+          className="h-14 pl-5 pr-6 flex items-center gap-3 bg-bone text-ink shadow-[0_10px_40px_rgba(0,0,0,0.5)] cursor-pointer hover:bg-white transition-colors"
+        >
+          {open ? <X size={18} /> : <MessageCircle size={18} />}
+          <span className="text-[0.7rem] font-semibold tracking-[0.2em] uppercase">{open ? 'Close' : 'Ask us'}</span>
+        </button>
+      </div>
 
       {open && (
         <section
@@ -106,7 +133,9 @@ export default function Chatbot() {
                   {m.text}
                   {m.links?.length > 0 && (
                     <span className="mt-3 flex flex-wrap gap-2">
-                      {m.links.map((l) => (
+                      {m.links.map((l) => l.action === 'book' ? (
+                        <button key={l.label} onClick={() => { setOpen(false); openBooking() }} className="inline-flex px-3 py-1.5 bg-bone text-ink text-[0.7rem] font-semibold cursor-pointer hover:bg-white transition-colors">{l.label}</button>
+                      ) : (
                         <a
                           key={l.label}
                           href={l.href}

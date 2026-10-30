@@ -98,3 +98,25 @@ export function branchStatus(b, now = new Date()) {
   if (mins >= from && mins < to) return { open: true, text: `Open now, until ${fmtTime(to)}` }
   return { open: false, text: mins < from ? `Opens today at ${fmtTime(from)}` : 'Closed, opens tomorrow' }
 }
+
+// Demo extras: the Tour / Admin / Mobile buttons beside Ask us, and the guided tour. Set to false for launch.
+export const DEMO_MODE = true
+
+// ---- Booking helpers ---------------------------------------------------------------------------------------
+// The shop runs on Manila time whatever the visitor's clock says.
+export function manilaParts(now = new Date()) {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Manila', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false, year: 'numeric', month: '2-digit', day: '2-digit' })
+      .formatToParts(now).map((x) => [x.type, x.value])
+  )
+  return { date: `${p.year}-${p.month}-${p.day}`, weekday: p.weekday, mins: (Number(p.hour) % 24) * 60 + Number(p.minute) }
+}
+
+// Opens the booking flow from any button. `services` can pre-select the main service and add-ons.
+export const openBooking = (detail = {}) => window.dispatchEvent(new CustomEvent('ucc-book', { detail }))
+
+export const fmtSlot = (m) => {
+  const h = Math.floor(m / 60)
+  const mm = String(m % 60).padStart(2, '0')
+  return `${h % 12 || 12}:${mm} ${h >= 12 ? 'PM' : 'AM'}`
+}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react'
 import { signIn, DEMO_USER, DEMO_PASS } from '../lib/auth'
-import { navigate } from '../lib/nav'
+import { navigate, skipNextIntro } from '../lib/nav'
 
 // Demo sign-in. The demo credentials are pre-filled and the button has focus, so Enter (or one click) goes straight in.
 export default function Login() {
@@ -34,7 +34,7 @@ export default function Login() {
 
       <main className="flex items-center justify-center px-5 py-12">
         <div className="w-full max-w-sm">
-          <a href="/" className="inline-flex items-center gap-2 text-xs text-muted hover:text-bone mb-10"><ArrowLeft size={13} /> Back to the website</a>
+          <a href="/" onClick={skipNextIntro} className="inline-flex items-center gap-2 text-sm text-chrome hover:text-white mb-10"><ArrowLeft size={13} /> Back to the website</a>
           <img src="/img/logo-mark.png" alt="" className="h-10 w-auto lg:hidden mb-6" />
           <h1 className="display text-3xl">Owner sign in</h1>
           <p className="mt-3 text-sm text-muted leading-relaxed">Sign in to edit what shows on the website.</p>

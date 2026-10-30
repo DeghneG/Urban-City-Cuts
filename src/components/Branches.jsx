@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Phone, Navigation, Coffee, MapPin } from 'lucide-react'
 import { Map, MapMarker, MarkerContent, MarkerLabel, MarkerPopup, useMap } from './ui/map'
-import { BRANCHES, directionsUrl, telHref, formatPhone, CANCELLATION, bookHref, bookExternal } from '../lib/site'
+import { BRANCHES, directionsUrl, telHref, formatPhone, CANCELLATION, openBooking } from '../lib/site'
 import { useReveal } from '../hooks/useReveal'
 
 const CENTER = [122.5455, 10.7145] // [lng, lat], between the three branches
@@ -51,7 +51,6 @@ export default function Branches() {
   const [selected, setSelected] = useState(null)
   const head = useReveal()
   const body = useReveal(150)
-  const bookProps = bookExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {}
 
   const reset = () => setSelected(null)
 
@@ -123,7 +122,10 @@ export default function Branches() {
                         <a key={p} href={telHref(p)} className="inline-flex items-center gap-2 text-sm footer-link tabular-nums"><Phone size={13} /> {formatPhone(p)}</a>
                       ))}
                     </div>
-                    <a href={directionsUrl(b)} target="_blank" rel="noopener noreferrer" className="inline-link mt-5"><Navigation size={12} /> Get directions</a>
+                    <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+                      <button onClick={() => openBooking({ branch: b.id })} className="btn btn-chrome !py-3 !px-5 cursor-pointer">Book {b.name}</button>
+                      <a href={directionsUrl(b)} target="_blank" rel="noopener noreferrer" className="inline-link"><Navigation size={12} /> Get directions</a>
+                    </div>
                   </article>
                 </li>
               )
@@ -136,7 +138,7 @@ export default function Branches() {
             <p className="display text-xl">Walk-ins &amp; appointments welcome</p>
             <p className="mt-2 text-sm text-muted">{CANCELLATION}</p>
           </div>
-          <a href={bookHref} {...bookProps} className="btn btn-chrome">Book your cut</a>
+          <button onClick={() => openBooking()} className="btn btn-chrome cursor-pointer">Book your cut</button>
         </div>
       </div>
     </section>
