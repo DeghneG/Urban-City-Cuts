@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/((?!video/|merch/|venue/|portfolio/|assets/).*)", "destination": "/index.html" }]
+}
