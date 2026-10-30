@@ -250,7 +250,7 @@
   
   
   line-height: 0.9;
-  animation: loaderRise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: loaderRise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 /* A second copy of the word carries only the travelling highlight */
 .loader__shine {
@@ -264,7 +264,7 @@
   background-clip: text;
   color: transparent;
   /* easeInOutSine: drifts in, glides across, settles out */
-  animation: loaderShine 2.6s cubic-bezier(0.37, 0, 0.63, 1) 0.5s both;
+  animation: loaderShine 1.2s cubic-bezier(0.37, 0, 0.63, 1) 0.25s both;
 }
 @keyframes loaderRise {
   from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
@@ -427,7 +427,7 @@
 /* Preloader progress bar: fills with an ease-out over the intro, number counts alongside */
 .loader__bar {
   width: min(62vw, 260px);
-  height: 1px;
+  height: 5px;
   margin: 2.25rem auto 0;
   background: #26282c;
   position: relative;
@@ -436,16 +436,7 @@
 .loader__bar > span {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #7d838a, #ffffff);
-  transform-origin: left;
-  transform: scaleX(0); /* driven from Loader.jsx so the bar and the number share one clock */
-}
-.loader__count {
-  margin-top: 0.9rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.3em;
-  color: var(--chrome-dark);
-  font-variant-numeric: tabular-nums;
+  clip-path: inset(0 100% 0 0); /* driven from Loader.jsx; the stripes come from .barber-stripes */
 }
 
 /* The tour hides the floating buttons so nothing sits on top of its card */

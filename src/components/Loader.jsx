@@ -2,10 +2,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { setScrollLocked } from '../lib/smoothScroll'
 
-const SHINE_MS = 2600
+const SHINE_MS = 1400 // how long the bar takes to fill; the logo starts to move about 2 s after the page opens
 const FLIGHT = 2.6 // seconds the logo takes to travel to the navbar
 
-// Intro: the logo emblem rises, a light sweeps across it, and a bar and percentage count to 100.
+// Intro: the logo emblem rises, a light sweeps across it, and a red, white and blue striped bar fills.
 // While this plays, the navbar's logo spot stays empty. Then GSAP carries the whole logo, emblem and wordmark,
 // slowly up to that spot while the loading screen lifts away, and the real navbar logo takes over exactly where it lands.
 // Both pieces live outside the lifting panel so they can travel on their own.
@@ -20,7 +20,6 @@ export default function Loader() {
   const emblem = useRef(null)
   const word = useRef(null)
   const chrome = useRef(null)
-  const count = useRef(null)
   const fill = useRef(null)
 
   // Put the flying pieces exactly over the spots reserved for them in the loading screen
@@ -65,14 +64,14 @@ export default function Loader() {
       const wx = wTo ? wTo.left - wFrom.left : 0
       const wy = wTo ? wTo.top - wFrom.top : 0
       const t = FLIGHT
-      const land = 0.5 + t // when the logo reaches the navbar, on the timeline's clock
+      const land = 0.3 + t // when the logo reaches the navbar, on the timeline's clock
 
       tl = gsap.timeline({ onComplete: () => { root.classList.remove('logo-pending'); setPhase('done') } })
-      tl.to(chrome.current, { autoAlpha: 0, y: 6, duration: 0.6, ease: 'power2.out' }, 0)
-        .to(emblem.current, { x: ex, y: ey, scale: es, duration: t, ease: 'power3.inOut' }, 0.5)
-        .to(word.current, { x: wx, y: wy, letterSpacing: '0.12em', duration: t, ease: 'power3.inOut' }, 0.5)
-        .to(panel.current, { yPercent: -100, duration: t * 0.85, ease: 'power3.inOut' }, 0.9)
-        .add(() => { root.classList.remove('is-loading'); setScrollLocked(false) }, 1.3) // the hero begins as the screen clears
+      tl.to(chrome.current, { autoAlpha: 0, y: 6, duration: 0.4, ease: 'power2.out' }, 0)
+        .to(emblem.current, { x: ex, y: ey, scale: es, duration: t, ease: 'power3.inOut' }, 0.3)
+        .to(word.current, { x: wx, y: wy, letterSpacing: '0.12em', duration: t, ease: 'power3.inOut' }, 0.3)
+        .to(panel.current, { yPercent: -100, duration: t * 0.85, ease: 'power3.inOut' }, 0.7)
+        .add(() => { root.classList.remove('is-loading'); setScrollLocked(false) }, 1.1) // the hero begins as the screen clears
         .add(() => root.classList.remove('logo-pending'), land - 0.15) // the navbar logo fades in just under the landing logo
         .to([emblem.current, word.current], { autoAlpha: 0, duration: 0.35, ease: 'none' }, land)
     })
@@ -85,21 +84,21 @@ export default function Loader() {
     }
   }, [skip])
 
-  // The percentage and the bar share one clock, so they always agree
+  // The bar fills left to right, and its red, white and blue stripes slide along as it goes.
+  // One stripe cycle is 32px along the gradient, which is 45.25px along x, so the slide loops seamlessly.
   useEffect(() => {
     if (skip) return
-    const start = performance.now() + 200
+    const start = performance.now() + 150
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
     let raf
     const tick = (now) => {
       const t = Math.min(1, Math.max(0, (now - start) / SHINE_MS))
-      const e = ease(t)
-      if (count.current) count.current.textContent = String(Math.round(e * 100)).padStart(3, '0')
-      if (fill.current) fill.current.style.transform = `scaleX(${e})`
+      if (fill.current) fill.current.style.clipPath = `inset(0 ${((1 - ease(t)) * 100).toFixed(2)}% 0 0)`
       if (t < 1) raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    const slide = gsap.to(fill.current, { backgroundPositionX: '45.2548px', duration: 0.9, ease: 'none', repeat: -1 })
+    return () => { cancelAnimationFrame(raf); slide.kill() }
   }, [skip])
 
   if (phase === 'done') return null
@@ -116,8 +115,7 @@ export default function Loader() {
           <div ref={spacer} className="mx-auto" style={{ width: 'clamp(6.5rem, 20vw, 9.5rem)', aspectRatio: '240 / 246' }} />
           <p ref={wordSpacer} className={`${wordClass} mt-8 inline-block opacity-0`} style={{ letterSpacing: '0.34em' }} aria-hidden="true">Urban City Cuts</p>
           <div ref={chrome}>
-            <div className="loader__bar" aria-hidden="true"><span ref={fill} /></div>
-            <p className="loader__count" aria-hidden="true"><span ref={count}>000</span> %</p>
+            <div className="loader__bar" aria-hidden="true"><span ref={fill} className="barber-stripes" /></div>
           </div>
         </div>
       </div>
