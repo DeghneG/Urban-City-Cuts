@@ -18,7 +18,8 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    /* No scroll-behavior: smooth here. Lenis does the smoothing; leaving the native one on makes the browser
+       re-smooth every frame Lenis scrolls, and the two fight. */
     max-width: 100%;
     /* clip, not hidden: hidden makes html a scroll container, which breaks
        smooth anchor scrolling and position:sticky */
@@ -49,12 +50,6 @@
   ::selection {
     background: var(--chrome);
     color: var(--ink);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
   }
 
   ::-webkit-scrollbar {
@@ -504,3 +499,8 @@
   opacity: 1;
   pointer-events: auto;
 }
+
+/* Lenis drives the scroll position itself */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
