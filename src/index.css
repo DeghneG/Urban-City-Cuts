@@ -511,3 +511,13 @@ html.lenis, html.lenis body { height: auto; }
   background-size: auto 100%;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
 }
+
+/* Intro hand-off: the navbar logo stays hidden until the loading emblem has flown onto it, then fades in */
+header nav > a > img,
+header nav > a > span {
+  transition: opacity 0.45s ease;
+}
+.logo-pending header nav > a > img,
+.logo-pending header nav > a > span {
+  opacity: 0;
+}
