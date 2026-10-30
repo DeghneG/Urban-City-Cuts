@@ -19,7 +19,8 @@ export const SHARED_PHONE = '09454939969'
 // Closed for All Saints' and All Souls' Day. The advisory hides itself once Nov 2 is over (Manila time).
 export const UNDAS = { closedFrom: '2026-11-01', closedTo: '2026-11-02', hideAfter: '2026-11-03T00:00:00+08:00' }
 
-// TODO: coordinates are approximate (street level). Replace with the exact pin from Google Maps.
+// Coordinates are the landmark each branch is described by (OpenStreetMap), good to within a few tens of metres.
+// To make them exact, replace lat and lng with the shop's own Google Maps pin.
 export const BRANCHES = [
   {
     id: 'molo',
@@ -33,8 +34,8 @@ export const BRANCHES = [
     phones: ['09637498945', SHARED_PHONE],
     schedule: { weekday: [630, 1200], weekend: [660, 1200] }, // minutes from midnight
     cafe: false,
-    lng: 122.544,
-    lat: 10.6975,
+    lng: 122.53958,
+    lat: 10.69549, // Tibiao Bakery on Avanceña St, which the shop faces
   },
   {
     id: 'mandurriao',
@@ -45,8 +46,8 @@ export const BRANCHES = [
     phones: ['09098748165', SHARED_PHONE],
     schedule: { weekday: [600, 1200], weekend: [600, 1200] },
     cafe: true,
-    lng: 122.5418,
-    lat: 10.715,
+    lng: 122.53118,
+    lat: 10.72282, // Robinsons Easymart on Guzman St, which the shop sits above
   },
   {
     id: 'jaro',
@@ -57,8 +58,8 @@ export const BRANCHES = [
     phones: ['09631070864', SHARED_PHONE],
     schedule: { weekday: [600, 1200], weekend: [600, 1200] },
     cafe: true,
-    lng: 122.55,
-    lat: 10.7312,
+    lng: 122.55439,
+    lat: 10.72795, // The Church of Jesus Christ of Latter-day Saints on Lopez Jaena St, which the shop is beside
   },
 ]
 

@@ -4,7 +4,7 @@ import { Map, MapMarker, MarkerContent, MarkerLabel, MarkerPopup, useMap } from 
 import { BRANCHES, directionsUrl, telHref, formatPhone, CANCELLATION, openBooking } from '../lib/site'
 import { useReveal } from '../hooks/useReveal'
 
-const CENTER = [122.5455, 10.7145] // [lng, lat], between the three branches
+const CENTER = [122.5428, 10.7117] // [lng, lat], between the three branches
 
 // Fly to the selected branch, and keep scroll-zoom off until the visitor clicks the map
 // so it never hijacks the page scroll.
