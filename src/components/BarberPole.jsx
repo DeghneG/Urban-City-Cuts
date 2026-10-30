@@ -46,8 +46,8 @@ export default function BarberPole({ mirror = false, className = '' }) {
   const polys = []
   for (let k = -2; k <= 5; k++) {
     const y = TUBE.y + k * PERIOD
-    polys.push(<polygon key={`r${k}`} points={`0,${y} 60,${y - 30} 60,${y - 10} 0,${y + 20}`} fill="#b4232c" />)
-    polys.push(<polygon key={`b${k}`} points={`0,${y + 40} 60,${y + 10} 60,${y + 30} 0,${y + 60}`} fill="#1f3f7a" />)
+    polys.push(<polygon key={`r${k}`} points={`0,${y} 60,${y - 30} 60,${y - 10} 0,${y + 20}`} fill="#25272b" />)
+    polys.push(<polygon key={`b${k}`} points={`0,${y + 40} 60,${y + 10} 60,${y + 30} 0,${y + 60}`} fill="#9ca3aa" />)
   }
 
   return (
@@ -78,7 +78,7 @@ export default function BarberPole({ mirror = false, className = '' }) {
         <rect x="4" y="22" width="52" height="12" rx="3.5" fill={`url(#${uid}-chrome)`} />
 
         {/* The tube: white glass, moving bands, then the shading on top */}
-        <rect x={TUBE.x} y={TUBE.y} width={TUBE.w} height={TUBE.h} rx="2" fill="#f1f2f4" />
+        <rect x={TUBE.x} y={TUBE.y} width={TUBE.w} height={TUBE.h} rx="2" fill="#eceef0" />
         <g clipPath={`url(#${uid}-tube)`}>
           <g ref={bands}>{polys}</g>
           <rect x={TUBE.x} y={TUBE.y} width={TUBE.w} height={TUBE.h} fill={`url(#${uid}-shade)`} />
