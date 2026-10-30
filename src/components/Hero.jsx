@@ -39,7 +39,7 @@ export default function Hero() {
 
   return (
     <section className="relative grid lg:grid-cols-12 lg:min-h-[calc(100svh-104px)]">
-      <div className="lg:col-span-7 flex flex-col justify-center px-5 py-14 md:py-20 lg:py-16 lg:pr-12 lg:pl-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))] order-2 lg:order-1">
+      <div className="lg:col-span-7 flex flex-col justify-center px-5 py-14 md:py-20 lg:py-16 lg:pr-12 lg:pl-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]">
         <p className="inline-flex items-center gap-3 text-xs text-chrome animate-fadeUp">
           <span className="relative flex w-2 h-2" aria-hidden="true">
             {status.open && <span className="absolute inset-0 rounded-full bg-bone opacity-60 animate-ping" />}
@@ -64,7 +64,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="lg:col-span-5 relative min-h-[62svh] lg:min-h-0 order-1 lg:order-2 overflow-hidden grain bg-ink-2">
+      <div className="lg:col-span-5 relative min-h-[56svh] lg:min-h-0 overflow-hidden grain bg-ink-2">
         {SLIDES.map((s, n) => (
           <div key={s.id} className={`slide absolute inset-0 overflow-hidden ${n === i ? 'is-active' : ''}`} aria-hidden={n !== i}>
             <Photo id={s.id} alt={s.alt} priority={n === 0} sizes="(min-width: 1024px) 42vw, 100vw" className="w-full h-full object-cover" />
