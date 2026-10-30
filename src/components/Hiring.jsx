@@ -13,7 +13,7 @@ export default function Hiring() {
               <span className="relative flex w-2 h-2"><span className="absolute inset-0 rounded-full bg-bone animate-ping" /><span className="relative w-2 h-2 rounded-full bg-bone" /></span>
               Now hiring
             </p>
-            <h2 className="display mt-4 text-3xl md:text-5xl">Barbers wanted — Pavia.</h2>
+            <h2 className="display mt-4 text-3xl md:text-5xl text-balance">Barbers wanted in Pavia.</h2>
             <p className="mt-4 text-chrome leading-relaxed">
               Urban City Cuts is looking for barbers to join our growing team in Pavia, Iloilo. ✂️
             </p>

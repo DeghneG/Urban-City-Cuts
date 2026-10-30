@@ -10,10 +10,10 @@ export default function Experience() {
   return (
     <section id="experience" className="py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-5">
-        <div ref={head} className="reveal max-w-xl">
+        <div ref={head} className="reveal max-w-3xl">
           <p className="eyebrow">The experience</p>
           <h2 className="display mt-6 text-4xl md:text-6xl">More than<br />a barbershop.</h2>
-          <p className="mt-6 text-chrome leading-relaxed">Walk-ins and appointments are always welcome. Settle in, we’ve got the rest.</p>
+          <p className="mt-6 max-w-md text-chrome leading-relaxed">Walk-ins and appointments are always welcome. Settle in, we’ve got the rest.</p>
         </div>
 
         <ul ref={grid} className="reveal mt-14 grid grid-cols-2 md:grid-cols-4 gap-px bg-line border border-line">
