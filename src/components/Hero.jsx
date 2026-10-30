@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react'
 import Photo from './Photo'
 import { BRANCHES, branchStatus, bookHref, bookExternal } from '../lib/site'
 
+// Shop interiors only (no clients in frame)
 const SLIDES = [
   { id: 'main', label: 'The shop floor', alt: 'Inside Urban City Cuts: barber chairs under a hexagon light ceiling' },
-  { id: 'cut-10', label: 'Hair art', alt: 'Hair design on a fade with a swept top' },
   { id: 'cut-06', label: 'Under the lights', alt: 'Caped chairs beneath the hexagon ceiling' },
-  { id: 'cut-04', label: 'Skin fade', alt: 'Textured crop with a clean skin fade' },
   { id: 'cut-01', label: 'The floor', alt: 'The barbershop floor and mirrors' },
 ]
 const HOLD_MS = 6000
