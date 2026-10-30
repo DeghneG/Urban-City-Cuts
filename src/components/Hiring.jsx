@@ -18,7 +18,7 @@ export default function Hiring() {
             </p>
             <h2 className="display mt-4 text-3xl md:text-5xl text-balance">Barbers wanted in {hiring.city}.</h2>
             <p className="mt-4 text-chrome leading-relaxed">
-              Urban City Cuts is looking for barbers to join our growing team in {hiring.city}. ✂️
+              Urban City Cuts is looking for barbers to join our growing team in {hiring.city}.
             </p>
           </div>
           <a href={MESSENGER_URL} target="_blank" rel="noopener noreferrer" className="btn btn-chrome"><MessageCircle size={15} /> Apply on Messenger</a>
