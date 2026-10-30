@@ -27,7 +27,7 @@ export default function FooterWordmark() {
   )
 
   return (
-    <div className="mx-auto max-w-6xl px-5 mt-16 select-none">
+    <div className="w-full px-2 sm:px-4 mt-16 select-none overflow-hidden">
       <svg
         ref={svg}
         viewBox={`0 0 ${W} ${H}`}
