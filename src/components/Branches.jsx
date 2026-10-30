@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Phone, Navigation, Coffee, MapPin } from 'lucide-react'
 import { Map, MapMarker, MarkerContent, MarkerLabel, MarkerPopup, useMap } from './ui/map'
 import { BRANCHES, directionsUrl, telHref, formatPhone, CANCELLATION, bookHref, bookExternal } from '../lib/site'
@@ -24,9 +24,17 @@ function MapBehavior({ selected }) {
     }
   }, [map])
 
+  // Fly to the selected branch; clearing the selection flies back out to all three
+  const hadSelection = useRef(false)
   useEffect(() => {
-    if (!map || !selected) return
-    map.flyTo({ center: [selected.lng, selected.lat], zoom: 14.5, duration: 1400, essential: true })
+    if (!map) return
+    if (selected) {
+      hadSelection.current = true
+      map.flyTo({ center: [selected.lng, selected.lat], zoom: 14.5, duration: 1400, essential: true })
+    } else if (hadSelection.current) {
+      hadSelection.current = false
+      map.flyTo({ center: CENTER, zoom: 12.4, duration: 1200, essential: true })
+    }
   }, [map, selected])
   return null
 }
@@ -70,7 +78,7 @@ export default function Branches() {
                     <div className={`transition-transform ${selected?.id === b.id ? 'scale-110' : ''}`}><Pin /></div>
                     <MarkerLabel position="bottom" className="text-bone text-xs font-semibold tracking-[0.18em] uppercase [text-shadow:0_1px_6px_rgba(0,0,0,0.9)]">{b.name}</MarkerLabel>
                   </MarkerContent>
-                  <MarkerPopup closeButton className="!bg-ink !text-bone !border !border-line !p-4 !w-64">
+                  <MarkerPopup className="!bg-ink !text-bone !border !border-line !p-4 !w-64">
                     <p className="display text-lg">{b.name}</p>
                     <p className="mt-2 text-xs text-chrome leading-relaxed">{b.address}</p>
                     <p className="mt-1 text-xs text-muted">{b.landmark}</p>
