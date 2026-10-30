@@ -20,7 +20,7 @@ export default function Advisory() {
         <span className="font-semibold tracking-[0.18em] uppercase mr-2">Undas advisory</span>
         Closed November 1–2 for All Saints’ &amp; All Souls’ Day. Book your cut in advance. We’re open until then. 🕯️
       </p>
-      <button onClick={close} aria-label="Dismiss advisory" className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-ink/60 hover:text-ink cursor-pointer">
+      <button onClick={close} aria-label="Dismiss advisory" className="absolute right-3 top-1/2 -translate-y-1/2 p-3.5 text-ink/60 hover:text-ink cursor-pointer">
         <X size={14} />
       </button>
     </div>
