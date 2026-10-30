@@ -52,10 +52,12 @@ function Site() {
 }
 
 // The demo pages share the app; everything else is the website. Lenis only starts on the site, so the
-// dashboard scrolls natively. /admin needs the demo sign-in.
+// sign-in and preview pages scroll natively. /admin needs the demo sign-in.
 function AdminGate() {
   const authed = isAuthed()
   useEffect(() => { if (!authed) navigate('/login', { replace: true }) }, [authed])
+  // The dashboard scrolls with Lenis too, so it feels like the website
+  useEffect(() => (authed ? initSmoothScroll() : undefined), [authed])
   return authed ? <Admin /> : null
 }
 
