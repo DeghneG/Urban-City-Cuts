@@ -85,7 +85,7 @@ export default function Chatbot() {
         </nav>
       )}
 
-      <div className="fab fixed z-[60] right-4 bottom-4 md:right-6 md:bottom-6 flex items-center gap-2">
+      <div data-tour="demo-buttons" className="fab fixed z-[60] right-4 bottom-4 md:right-6 md:bottom-6 flex items-center gap-2">
         {DEMO_MODE && !EMBEDDED && !open && (
           <>
             <button onClick={() => window.dispatchEvent(new Event('ucc-tour-start'))} aria-label="Replay the site tour" title="Replay the site tour" className={demoBtn}>

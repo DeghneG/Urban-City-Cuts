@@ -11,24 +11,24 @@ const DWELL_MS = 7000 // how long auto-play rests on each stop
 // One stop per section, top to bottom. `sel` is where to glide; `root` is the area the card must stay clear of.
 // `chat` opens the assistant (so the card is pinned away from it); `owner` shows the dashboard and phone-preview links.
 const STEPS = [
-  { top: true, root: 'main > section', title: (n) => `Welcome, ${n}`, text: 'A premium, minimal site for Urban City Cuts. This tour glides down the page from top to bottom.' },
-  { sel: '#craft', title: () => 'The craft', text: 'Photos open up and drift as you scroll, with the shop’s own words.' },
-  { sel: '#gallery', title: () => 'Gallery', text: 'Filter by cuts, the shop, the team or events. Tap a photo for full screen.' },
-  { sel: '#experience', title: () => 'The experience', text: 'Parking, Wi-Fi, café and the rest, at a glance.' },
-  { sel: '#menu', title: () => 'Build your visit', text: 'Every service from the printed menu. Tap items and the total updates.' },
-  { sel: '#cafe', title: () => 'The café', text: 'The full café menu, with hot and iced prices.' },
-  { sel: '#branches', title: () => 'Three branches', text: 'A map of all three shops with live hours, tap-to-call and directions.' },
-  { sel: '#franchise', title: () => 'Franchise', text: 'Now open for franchising, with no royalty fee.' },
-  { sel: '#hiring', title: () => 'Now hiring', text: 'A hiring notice the owners can switch on or off.' },
-  { end: true, root: 'footer', chat: true, title: () => 'Ask anything', text: 'A built-in assistant answers questions about hours, prices and booking. No outside AI service.' },
-  { end: true, root: 'footer', owner: true, title: (n) => `That is the site, ${n}`, text: 'Sign in to edit prices, announcements and photos, or see the site on a phone.' },
+  { top: true, root: 'main > section', focus: () => { let e = document.querySelector('main > section > div'); for (let n = 0; n < 0; n++) e = e?.parentElement; return e }, title: (n) => `Welcome, ${n}`, text: 'A premium, minimal site for Urban City Cuts. This tour glides down the page from top to bottom.' },
+  { sel: '#craft', focus: () => { let e = document.querySelector('#craft h2'); for (let n = 0; n < 1; n++) e = e?.parentElement; return e }, title: () => 'The craft', text: 'Photos open up and drift as you scroll, with the shop’s own words.' },
+  { sel: '#gallery', focus: () => { let e = document.querySelector('#gallery [role=tablist]'); for (let n = 0; n < 1; n++) e = e?.parentElement; return e }, title: () => 'Gallery', text: 'Filter by cuts, the shop, the team or events. Tap a photo for full screen.' },
+  { sel: '#experience', focus: () => { let e = document.querySelector('#experience ul'); for (let n = 0; n < 0; n++) e = e?.parentElement; return e }, title: () => 'The experience', text: 'Parking, Wi-Fi, café and the rest, at a glance.' },
+  { sel: '#menu', focus: () => { let e = document.querySelector('#menu [role=tablist]'); for (let n = 0; n < 3; n++) e = e?.parentElement; return e }, title: () => 'Build your visit', text: 'Every service from the printed menu. Tap items and the total updates.' },
+  { sel: '#cafe', focus: () => { let e = document.querySelector('#cafe h3'); for (let n = 0; n < 2; n++) e = e?.parentElement; return e }, title: () => 'The café', text: 'The full café menu, with hot and iced prices.' },
+  { sel: '#branches', focus: () => { let e = document.querySelector('#branches .maplibregl-map'); for (let n = 0; n < 0; n++) e = e?.parentElement; return e }, title: () => 'Three branches', text: 'A map of all three shops with live hours, tap-to-call and directions.' },
+  { sel: '#franchise', focus: () => { let e = document.querySelector('#franchise h2'); for (let n = 0; n < 1; n++) e = e?.parentElement; return e }, title: () => 'Franchise', text: 'Now open for franchising, with no royalty fee.' },
+  { sel: '#hiring', focus: () => { let e = document.querySelector('#hiring [role=note]'); for (let n = 0; n < 0; n++) e = e?.parentElement; return e }, title: () => 'Now hiring', text: 'A hiring notice the owners can switch on or off.' },
+  { end: true, root: 'footer', chat: true, focus: () => { let e = document.querySelector('#ucc-chat'); for (let n = 0; n < 0; n++) e = e?.parentElement; return e }, title: () => 'Ask anything', text: 'A built-in assistant answers questions about hours, prices and booking. No outside AI service.' },
+  { end: true, root: 'footer', owner: true, focus: () => { let e = document.querySelector('[data-tour=demo-buttons]'); for (let n = 0; n < 0; n++) e = e?.parentElement; return e }, title: (n) => `That is the site, ${n}`, text: 'Sign in to edit prices, announcements and photos, or see the site on a phone.' },
 ]
 
 const readName = () => { try { return localStorage.getItem(NAME_KEY) || '' } catch { return '' } }
 
 // Pick the screen position where the card covers the least of what the visitor came to look at.
 // Slots are scored by how much of the stop's text, photos and buttons they would sit on top of.
-function pickSlot(step, card, prev) {
+function pickSlot(step, card, prev, spot) {
   const vw = window.innerWidth
   const vh = window.innerHeight
   const mobile = vw < 640
@@ -50,6 +50,8 @@ function pickSlot(step, card, prev) {
         .map((e) => e.getBoundingClientRect())
         .filter((r) => r.width > 4 && r.height > 4 && r.bottom > 0 && r.top < vh && r.right > 0 && r.left < vw)
     : []
+  // The highlighted area counts three times: covering it defeats the point of highlighting it
+  if (spot) for (let n = 0; n < 3; n++) rects.push({ left: spot.x, right: spot.x + spot.w, top: spot.y, bottom: spot.y + spot.h })
   const overlap = (s) => rects.reduce((sum, r) => {
     const ox = Math.max(0, Math.min(s.x + w, r.right) - Math.max(s.x, r.left))
     const oy = Math.max(0, Math.min(s.y + h, r.bottom) - Math.max(s.y, r.top))
@@ -72,6 +74,7 @@ export default function Tour() {
   const [arrived, setArrived] = useState(false)
   const [playing, setPlaying] = useState(true)
   const [slot, setSlot] = useState({ x: 24, y: 24, w: 390 })
+  const [spot, setSpot] = useState(null)
   const run = useRef(0) // guards against a stale glide finishing after the visitor moved on
   const card = useRef(null)
 
@@ -136,11 +139,44 @@ export default function Tour() {
   // Choose where the card sits once the page has stopped moving (and again if the window changes size)
   useLayoutEffect(() => {
     if (phase !== 'tour' || !arrived || !card.current) return
-    const place = () => card.current && setSlot((prev) => pickSlot(step, card.current, prev))
+    // The highlight hugs the focus element, with a little air, clamped to what is actually on screen
+    const measure = () => {
+      const el = step.focus?.()
+      const r = el?.getBoundingClientRect()
+      if (!r || r.width < 4 || r.height < 4) return null
+      const pad = 10
+      const x = Math.max(8, r.left - pad)
+      const y = Math.max(8, r.top - pad)
+      const w = Math.min(window.innerWidth - 8, r.right + pad) - x
+      const h = Math.min(window.innerHeight - 8, r.bottom + pad) - y
+      return w > 8 && h > 8 ? { x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) } : null
+    }
+    const sync = () => setSpot((prev) => {
+      const next = measure()
+      return next && prev && next.x === prev.x && next.y === prev.y && next.w === prev.w && next.h === prev.h ? prev : next
+    })
+    const place = () => {
+      const s = measure()
+      setSpot(s)
+      if (card.current) setSlot((prev) => pickSlot(step, card.current, prev, s))
+    }
     place()
+    const tick = setInterval(sync, 350) // catches late layout: the map loading, the chat opening
+    window.addEventListener('scroll', sync, { passive: true })
     window.addEventListener('resize', place)
-    return () => window.removeEventListener('resize', place)
+    return () => {
+      clearInterval(tick)
+      window.removeEventListener('scroll', sync)
+      window.removeEventListener('resize', place)
+      setSpot(null)
+    }
   }, [phase, arrived, i]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The owner stop points at the demo buttons, which are otherwise tucked away during the tour
+  useEffect(() => {
+    document.documentElement.classList.toggle('tour-show-fab', phase === 'tour' && Boolean(step.owner))
+    return () => document.documentElement.classList.remove('tour-show-fab')
+  }, [phase, step])
 
   // Auto-play: rest on each stop, then move down. Pausing stops the clock; the last stop never auto-finishes.
   useEffect(() => {
@@ -199,6 +235,8 @@ export default function Tour() {
 
   const last = i === STEPS.length - 1
   return (
+    <>
+    {arrived && spot && <div key={`spot-${i}`} className="spot fixed z-[65] pointer-events-none" style={{ left: spot.x, top: spot.y, width: spot.w, height: spot.h }} aria-hidden="true" />}
     <div ref={card} className="fixed z-[70] left-0 top-0" style={{ width: slot.w, transform: `translate3d(${slot.x}px, ${slot.y}px, 0)` }}>
       <section
         key={i}
@@ -238,5 +276,6 @@ export default function Tour() {
         </div>
       </section>
     </div>
+    </>
   )
 }
