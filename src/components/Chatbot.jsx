@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { MessageCircle, X, Send, Instagram, Facebook } from 'lucide-react'
+import { MessageCircle, X, Send, Instagram } from 'lucide-react'
 import { answer, GREETING } from '../lib/chatEngine'
 import { INSTAGRAM_URL, FACEBOOK_URL } from '../lib/site'
 
@@ -43,22 +43,30 @@ export default function Chatbot() {
       {/* Social links ride above the launcher; they step aside while the chat is open */}
       {!open && (
         <nav aria-label="Social media" className="fixed z-[60] right-4 bottom-20 md:right-6 md:bottom-[6.5rem] flex flex-col gap-2">
-          {[
-            [INSTAGRAM_URL, 'Instagram @urbancitycuts', Instagram],
-            [FACEBOOK_URL, 'Facebook, Urban City Cuts', Facebook],
-          ].map(([href, label, Icon]) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              title={label}
-              className="w-12 h-12 grid place-items-center bg-ink-3 border border-line text-bone shadow-[0_10px_40px_rgba(0,0,0,0.5)] hover:bg-bone hover:text-ink hover:border-bone transition-colors"
-            >
-              <Icon size={18} />
-            </a>
-          ))}
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram @urbancitycuts"
+            title="Instagram @urbancitycuts"
+            className="w-12 h-12 grid place-items-center text-white shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110"
+            style={{ background: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%)' }}
+          >
+            <Instagram size={22} strokeWidth={1.9} />
+          </a>
+          <a
+            href={FACEBOOK_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook, Urban City Cuts"
+            title="Facebook, Urban City Cuts"
+            className="w-12 h-12 grid place-items-center shadow-[0_10px_40px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-0.5 hover:brightness-110"
+            style={{ background: '#1877f2' }}
+          >
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#fff" aria-hidden="true">
+              <path d="M16.6 13.1l.55-3.6h-3.45V7.17c0-.98.48-1.94 2.03-1.94h1.57V2.17S15.87 1.93 14.5 1.93c-2.85 0-4.7 1.72-4.7 4.84V9.5H6.64v3.6H9.8V22h3.9v-8.9h2.9z" />
+            </svg>
+          </a>
         </nav>
       )}
 

@@ -7,7 +7,9 @@ export function initSmoothScroll() {
 
   const lenis = new Lenis({
     autoRaf: true,
-    duration: 1.15,
+    // Slightly slower than the Lenis default feel: a longer glide, and each wheel notch travels a bit less
+    duration: 1.6,
+    wheelMultiplier: 0.85,
     // Lenis reads the section[id] scroll-margin-top in index.css, which clears the fixed navbar
     anchors: true,
   })
