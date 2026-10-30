@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { MessageCircle, X, Send } from 'lucide-react'
+import { MessageCircle, X, Send, Instagram, Facebook } from 'lucide-react'
 import { answer, GREETING } from '../lib/chatEngine'
+import { INSTAGRAM_URL, FACEBOOK_URL } from '../lib/site'
 
 // Rule-based inquiry assistant. All answers come from the site's own data; nothing leaves the browser.
 export default function Chatbot() {
@@ -39,6 +40,28 @@ export default function Chatbot() {
 
   return (
     <>
+      {/* Social links ride above the launcher; they step aside while the chat is open */}
+      {!open && (
+        <nav aria-label="Social media" className="fixed z-[60] right-4 bottom-20 md:right-6 md:bottom-[6.5rem] flex flex-col gap-2">
+          {[
+            [INSTAGRAM_URL, 'Instagram @urbancitycuts', Instagram],
+            [FACEBOOK_URL, 'Facebook, Urban City Cuts', Facebook],
+          ].map(([href, label, Icon]) => (
+            <a
+              key={label}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              title={label}
+              className="w-12 h-12 grid place-items-center bg-ink-3 border border-line text-bone shadow-[0_10px_40px_rgba(0,0,0,0.5)] hover:bg-bone hover:text-ink hover:border-bone transition-colors"
+            >
+              <Icon size={18} />
+            </a>
+          ))}
+        </nav>
+      )}
+
       <button
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
